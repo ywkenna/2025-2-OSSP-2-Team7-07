@@ -1,0 +1,44 @@
+{% load static %}
+
+<h1>Movie List</h1>
+
+<form action="{% url 'search' %}" method="get">
+
+    <input type="text" name="query" placeholder="영화 검색">
+
+    <select name="genre">
+        <option value="">전체 장르</option>
+        <option value="액션">액션</option>
+        <option value="드라마">드라마</option>
+        <option value="코미디">코미디</option>
+        <option value="로맨스">로맨스</option>
+    </select>
+
+    <select name="difficulty">
+        <option value="">전체 난이도</option>
+        <option value="1">Level 1</option>
+        <option value="2">Level 2</option>
+        <option value="3">Level 3</option>
+        <option value="4">Level 4</option>
+        <option value="5">Level 5</option>
+    </select>
+
+    <button type="submit">검색</button>
+
+</form>
+<ul>
+{% for movie in movies %}
+    <li>
+        <a href="{% url 'detail' movie.id %}">
+            {{ movie.title_ko }} ({{ movie.title_en }})
+        </a>
+        <br>
+        <img src="{% static movie.image %}" width="100">
+        <br>
+        {{movie.year}} {{movie.runtime}}
+        <br>
+        {{movie.genre}}
+    </li>
+{% endfor %}
+</ul>
+
