@@ -1,15 +1,15 @@
+<form action="/api/movies/recommend/" method="get">
+    <label for="type">시험 종류:</label>
+    <select name="type" id="type">
+        <option value="toeic">TOEIC</option>
+        <option value="toefl">TOEFL iBT</option>
+        <option value="ielts">IELTS</option>
+    </select>
 
+    <br>
 
-<h1>영어 성적 입력</h1>
+    <label for="score">점수 입력:</label>
+    <input type="number" name="score" id="score" placeholder="점수" required>
 
-{% if message %}
-    <div style="color: red; font-weight: bold; margin-bottom: 15px;">
-        {{ message }}
-    </div>
-{% endif %}
-
-<form action="{%url 'recommend' %}" method="get">
-    <label for = "score">점수 : </label>
-    <input type = "number" name = "score" id = "score">
-    <button type="submit">입력</button>
+    <button type="submit">추천 받기</button>
 </form>

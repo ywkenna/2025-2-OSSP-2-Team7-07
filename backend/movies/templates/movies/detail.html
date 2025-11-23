@@ -1,6 +1,6 @@
 {% load static %}
 
-<h1>{{ movie.title_ko }}</h1>
+<h1>{{ movie.title_ko }} ({{ movie.title_en }})</h1>
 <p>
     <img src="{% static movie.image %}" width="100"><br>
     {{ movie.year }}<br>
