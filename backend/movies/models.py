@@ -9,11 +9,15 @@ class MovieData(models.Model):
     image = models.CharField(max_length=500, null=False)
     title_ko = models.TextField(null=False)
     title_en = models.TextField(null=False, db_column='title_en')
-    year = models.IntegerField(null=False)
+    year = models.IntegerField(null=True)
     plot = models.TextField(null=True)
     runtime = models.IntegerField(null=True)
     genre = models.CharField(max_length=30, null=True)
     difficulty = models.IntegerField(null=True)
+    word_avg_level = models.FloatField(null=True)
+    tree_depth = models.FloatField(null=True)
+    pron_acc = models.FloatField(null=True)
+    real_world = models.FloatField(null=True)
 
 
     class Meta:

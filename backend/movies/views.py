@@ -100,6 +100,9 @@ def recommend(request):
             difficulty = 4
         elif 0 <= score <=41:
             difficulty = 1
+        else : return render(request, 'movies/score.html', {
+            'message': '유효하지 않은 점수입니다. 점수를 다시 입력해주세요. (TOEFL IBT: 0~120)'
+        })
     
 
     elif exam_type == 'ielts':
