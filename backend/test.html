@@ -8,7 +8,7 @@
 
 <div class="container">
     <h2>회원가입</h2>
-    <form id="registerForm">
+    <form id="registerForm" onsubmit="register(event)">
 
         <label>이름*</label>
         <input type="text" name="first_name" required /><br/>
@@ -23,13 +23,13 @@
         <input type="email" name="email" /><br/>
 
         <label>영어레벨</label>
-        <input type="number" name="level" /><br/>
+        <input type="number" name="english_level" /><br/>
 
         <button type="submit">회원가입</button>
     </form>
 
     <h2 id="loginTitle">로그인</h2>
-    <form id="loginForm">
+    <form id="loginForm" onsubmit="login(event)">
         <label>아이디</label>
         <input type="text" name="username" required /><br/>
 
@@ -42,7 +42,6 @@
     <div id="userBox" class="hidden">
         <h2>사용자 정보</h2>
         <div class="userinfo" id="userInfo"></div>
-        <button id="logoutBtn">로그아웃</button>
     </div>
 </div>
 
@@ -50,7 +49,7 @@
 const API = "http://localhost:8000/api/users";
 
 // 회원가입
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
+async function register(e) {
     e.preventDefault();
     const form = e.target;
     const body = {
@@ -58,7 +57,7 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
         password: form.password.value,
         first_name: form.first_name.value,
         email: form.email.value,
-        english_level: form.level.value === "" ? null : Number(form.level.value)
+        english_level: form.english_level.value === "" ? null : Number(form.english_level.value)
     };
 
     const res = await fetch(`${API}/register/`, {
@@ -79,10 +78,11 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
 
     alert(`회원가입 실패: ${message}`);
     }
-});
+}
+
 
 // 로그인
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+async function login(e) {
     e.preventDefault();
     const form = e.target;
     const body = {
@@ -107,11 +107,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     } else {
         alert("로그인 실패");
     }
-});
+}
 
 // 로그아웃
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-
+async function logout() {
     alert("로그아웃 성공");
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
@@ -140,7 +139,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
         alert("로그아웃 에러");
     } 
     */
-});
+}
 
 // 로그인 상태 확인 후 정보 표시
 async function loadUserInfo() {
@@ -160,11 +159,74 @@ async function loadUserInfo() {
     const userdata = await res.json();
 
     document.getElementById("userInfo").innerHTML = `
-        아이디: ${userdata.username}<br>
-        이름: ${userdata.first_name}<br>
-        Email: ${userdata.email}<br>
-        영어레벨: ${userdata.english_level}<br>
+        아이디: ${userdata.username}<br/>
+        이름: ${userdata.first_name}<br/>
+        Email: ${userdata.email}<br/>
+        영어레벨: ${userdata.english_level}<br/>
+        <input id="updateLevelInput" type="number" />
+        <button onclick="updateLevel()">수정</button><br/>
+        <button onclick="logout()">로그아웃</button>
     `;
+}
+
+async function updateLevel() {
+    const access = localStorage.getItem("access");
+    const newLevel = Number(document.getElementById("updateLevelInput").value);
+
+    const res = await fetch(`${API}/userinfo/`, {
+        method: "PATCH",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({ english_level: newLevel })
+    });
+
+    if (res.ok) {
+        alert("영어레벨 수정 성공");
+        loadUserInfo();
+    }
+}
+
+async function likeMovie(movieId) {
+    const res = await fetch(`${API}/like/${movieId}/`, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("access"),
+            "Content-Type": "application/json"
+        }
+    })
+
+    if(res.ok) {
+        alert("영화 찜 성공");
+    }
+}
+
+async function unlikeMovie(movieId) {
+    const res = await fetch(`${API}/like/${movieId}/`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("access"),
+            "Content-Type": "application/json"
+        }
+    })
+
+    if(res.ok) {
+        alert("영화 찜 취소 성공");
+    }
+}
+
+async function getLikedMovies() {
+    const res = await fetch(`${API}/like/`, {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("access")
+        }
+    })
+    if(res.ok) {
+        const data = res.json();
+        return data;
+    }
 }
 
 // 페이지가 로드되면 로그인 상태 확인

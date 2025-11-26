@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .serializers import RegisterSerializer, UserPublicSerializer
+from movies.models import MovieData
 
 # 회원가입
 class RegisterView(generics.CreateAPIView):
@@ -64,9 +65,52 @@ class UserInfoView(APIView):
 
         # Profile 정보 수정
         profile = user.profile
-        for field in ["english_level"]:
-            if field in request.data:
-                setattr(profile, field, request.data[field])
+        if "english_level" in request.data:
+            profile.english_level = request.data["english_level"]
+
+        if "like_movies" in request.data:
+            profile.like_movies.set(request.data["like_movies"])
+            
         profile.save()
 
         return Response(UserPublicSerializer(user).data)
+
+class UpdateLikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, movie_id):
+        try:
+            movie = MovieData.objects.get(id=movie_id)
+        except MovieData.DoesNotExist:
+            return Response({"detail": "Movie not found"}, status=404)
+
+        profile = request.user.profile
+        profile.like_movies.add(movie)
+        return Response({"detail": "Liked!"}, status=200)
+
+    def delete(self, request, movie_id):
+        try:
+            movie = MovieData.objects.get(id=movie_id)
+        except MovieData.DoesNotExist:
+            return Response({"detail": "Movie not found"}, status=404)
+
+        profile = request.user.profile
+        profile.like_movies.remove(movie)
+        return Response({"detail": "Unliked!"}, status=200)
+    
+class LikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        profile = request.user.profile
+        movies = profile.like_movies.all()
+
+        movie_list = [
+            {
+                "id": movie.id,
+                "title_ko": movie.title_ko,
+            }
+            for movie in movies
+        ]
+
+        return Response(movie_list, status=200)

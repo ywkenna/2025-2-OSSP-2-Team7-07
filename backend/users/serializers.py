@@ -10,10 +10,15 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserPublicSerializer(serializers.ModelSerializer):
     english_level = serializers.CharField(source="profile.english_level", read_only=True)
+    like_movies = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        source="profile.like_movies"
+    )
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "english_level"]
+        fields = ["id", "username", "email", "first_name", "last_name", "english_level", "like_movies"]
 
 class RegisterSerializer(serializers.ModelSerializer):
     english_level = serializers.IntegerField(

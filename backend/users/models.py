@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from movies.models import MovieData
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -10,4 +11,9 @@ class Profile(models.Model):
         null=True,
         blank=True,
         default=None
+    )
+    like_movies = models.ManyToManyField(
+        MovieData,
+        blank=True,
+        related_name='liked_users'
     )
