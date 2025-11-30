@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .serializers import RegisterSerializer, UserPublicSerializer
+from users.models import TAGS
 from movies.models import MovieData
 
 # 회원가입
@@ -70,6 +71,13 @@ class UserInfoView(APIView):
 
         if "like_movies" in request.data:
             profile.like_movies.set(request.data["like_movies"])
+
+        if "like_tags" in request.data:
+            tags = request.data["like_tags"]
+            for tag in tags:
+                if tag not in TAGS:
+                    return Response({"detail": f"Invalid tag: {tag}"}, status=400)
+            profile.like_tags = tags
             
         profile.save()
 
@@ -86,7 +94,7 @@ class UpdateLikeView(APIView):
 
         profile = request.user.profile
         profile.like_movies.add(movie)
-        return Response({"detail": "Liked!"}, status=200)
+        return Response({"detail": "Liked"})
 
     def delete(self, request, movie_id):
         try:
@@ -96,7 +104,7 @@ class UpdateLikeView(APIView):
 
         profile = request.user.profile
         profile.like_movies.remove(movie)
-        return Response({"detail": "Unliked!"}, status=200)
+        return Response({"detail": "Unliked"})
     
 class LikeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -113,4 +121,4 @@ class LikeView(APIView):
             for movie in movies
         ]
 
-        return Response(movie_list, status=200)
+        return Response(movie_list)

@@ -15,17 +15,22 @@ class UserPublicSerializer(serializers.ModelSerializer):
         read_only=True,
         source="profile.like_movies"
     )
+    like_tags = serializers.ListField(
+        source="profile.like_tags",
+        child=serializers.CharField(),
+        read_only=True
+    )
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "english_level", "like_movies"]
+        fields = ["id", "username", "email", "first_name", "last_name", "english_level", "like_movies", "like_tags"]
 
 class RegisterSerializer(serializers.ModelSerializer):
     english_level = serializers.IntegerField(
         required=False, 
         allow_null = True,
     )
-    password = serializers.CharField(write_only=True, min_length=8)
+    password = serializers.CharField(write_only=True, min_length=1)
 
     class Meta:
         model = User

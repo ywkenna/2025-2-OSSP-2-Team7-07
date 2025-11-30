@@ -162,9 +162,26 @@ async function loadUserInfo() {
         아이디: ${userdata.username}<br/>
         이름: ${userdata.first_name}<br/>
         Email: ${userdata.email}<br/>
+
         영어레벨: ${userdata.english_level}<br/>
         <input id="updateLevelInput" type="number" />
         <button onclick="updateLevel()">수정</button><br/>
+        <br/>
+        좋아하는 태그 목록: ${userdata.like_tags}<br/>
+        <label><input type="checkbox" class="tag-check" value="액션/스릴러"> 액션/스릴러</label>
+        <label><input type="checkbox" class="tag-check" value="드라마/감성"> 드라마/감성</label>
+        <label><input type="checkbox" class="tag-check" value="SF/판타지"> SF/판타지</label><br/>
+        <label><input type="checkbox" class="tag-check" value="코미디"> 코미디</label>
+        <label><input type="checkbox" class="tag-check" value="역사/전쟁"> 역사/전쟁</label>
+        <label><input type="checkbox" class="tag-check" value="애니메이션"> 애니메이션</label>
+        <label><input type="checkbox" class="tag-check" value="기타"> 기타</label><br/>
+        <button onclick="updateTags()">수정</button><br/>
+        <br/>
+        찜한 영화 목록: ${userdata.like_movies}<br/>
+        <input id="updateLikeInput" type="number"/>
+        <button onclick="likeMovie()">추가</button>
+        <button onclick="unlikeMovie()">삭제</button><br/>
+        <br/>
         <button onclick="logout()">로그아웃</button>
     `;
 }
@@ -188,39 +205,71 @@ async function updateLevel() {
     }
 }
 
-async function likeMovie(movieId) {
+async function updateTags() {
+    const access = localStorage.getItem("access");
+    const selectedTags = Array.from(document.querySelectorAll(".tag-check:checked"))
+        .map(c => c.value);
+
+    const res = await fetch(`${API}/userinfo/`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+            body: JSON.stringify({
+            like_tags: selectedTags
+        })
+    })
+
+    if(res.ok) {
+        alert("태그 수정 성공");
+        loadUserInfo();
+    }
+}
+
+async function likeMovie() {
+    const access = localStorage.getItem("access");
+    const movieId = Number(document.getElementById("updateLikeInput").value);
+
     const res = await fetch(`${API}/like/${movieId}/`, {
         method: "POST",
-        headers: {
-            "Authorization": "Bearer " + localStorage.getItem("access"),
-            "Content-Type": "application/json"
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
         }
     })
 
     if(res.ok) {
         alert("영화 찜 성공");
+        loadUserInfo();
     }
 }
 
-async function unlikeMovie(movieId) {
+async function unlikeMovie() {
+    const access = localStorage.getItem("access");
+    const movieId = Number(document.getElementById("updateLikeInput").value);
+
     const res = await fetch(`${API}/like/${movieId}/`, {
         method: "DELETE",
-        headers: {
-            "Authorization": "Bearer " + localStorage.getItem("access"),
-            "Content-Type": "application/json"
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
         }
     })
 
     if(res.ok) {
         alert("영화 찜 취소 성공");
+        loadUserInfo();
     }
 }
 
 async function getLikedMovies() {
+    const access = localStorage.getItem("access");
+
     const res = await fetch(`${API}/like/`, {
         method: "GET",
         headers: {
-            "Authorization": "Bearer " + localStorage.getItem("access")
+            "Authorization": `Bearer ${access}`
         }
     })
     if(res.ok) {
