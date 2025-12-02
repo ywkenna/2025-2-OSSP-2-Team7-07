@@ -1,3 +1,4 @@
+
 .top-bar {
 	position: fixed;
 	top: 0;
@@ -459,3 +460,328 @@ body {
 .signup-btn:hover {
     background-color: #e5e5e5;
 }
+
+/* ---------- 마이페이지 공통 ---------- */
+.mypage-container {
+    max-width: 900px;
+    margin: 50px auto 50px;
+    padding: 0 20px;
+}
+
+/* ---------- 기본 정보 카드 ---------- */
+.profile-box {
+    display: flex;
+    align-items: center;
+    padding: 28px;
+    border-radius: 18px;
+    background: #ffffff; /* 완전 흰색으로 깔끔 */
+    border: 1px solid #ececec; /* 최소한의 경계 */
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04); /* 아주 약한 그림자 */
+    margin-bottom: 35px;
+}
+
+.profile-img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    border: 2px solid #e8e8ff; /* 파란색 거의 없는 연보라 */
+    background: #fafafa;
+    margin-right: 25px;
+}
+
+.profile-info h2 {
+    margin: 0 0 6px;
+    font-size: 21px;
+    font-weight: 600;
+    color: #333;
+}
+
+.profile-info p {
+    margin: 3px 0;
+    color: #777; /* 부드러운 회색 */
+    font-size: 14.5px;
+}
+
+#profile-input {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.profile-img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    border: 2px solid #e8e8ff;
+    background: #fafafa;
+    margin-right: 25px;
+    cursor: pointer; /* 클릭 가능 표시 */
+    transition: transform 0.2s;
+}
+
+/* ---------- 탭 메뉴 ---------- */
+.mypage-tabs {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #e5e5e5; /* 전체 라인 */
+    margin-bottom: 25px;
+    padding-bottom: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+    transition: 0.2s;
+    border-bottom: 3px solid transparent; /* 기본 보더 숨김 */
+}
+
+.tab-btn:hover {
+    color: #333;
+}
+
+.tab-btn.active {
+    color: #222;
+    font-weight: 600;
+    border-bottom: 3px solid #b8bfff; /* 아주 연한 포인트 라인만 */
+}
+
+
+/* ---------- 영어 성적 결과 섹션 ---------- */
+#score-result-section {
+    display: none; /* 기본 숨김 */
+    margin-top: 15px;
+    padding: 20px;
+    border-radius: 15px;
+    background: #f7f7ff;
+    border: 1px solid #d9dbff;
+}
+
+
+#score-result-section p {
+    margin: 8px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+
+#edit-score-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #b5baff;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#edit-score-btn:hover {
+    background: #9ca3ff;
+}
+
+
+#score-input-section {
+    display: block; /* block으로 세로 배치 확실히 */
+    margin-top: 15px;
+}
+
+
+#score-input-section select,
+#score-input-section input {
+    display: block; /* 각 항목을 한 줄씩 차지하게 */
+    width: 100%;
+    margin-top:10px;
+    margin-bottom: 20px; /* 항목 간 간격 */
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 12px;
+    border: 1px solid #cfd3ff;
+    background: #f7f7ff;
+    box-sizing: border-box;
+}
+
+
+#save-score-btn {
+    display: block; /* 한 줄 차지 */
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #b8bfff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+
+#save-score-btn:hover {
+    background: #9ca3ff;
+}
+
+.content-box {
+    display: none;
+}
+
+.content-box.show {
+    display: block;
+}
+
+/*--*/
+
+.wishlist-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	flex: 1;
+}
+
+.wishlist-card {
+	width: 180px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+	overflow: hidden;
+	text-align: center;
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	position: relative;
+	transition: all 0.2s;
+}
+
+
+.wishlist-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.wishlist-card img.card-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.wishlist-card .card-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 8px 0 4px 0;
+    padding: 0 5px;
+}
+
+.wishlist-card .card-ename {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 4px;
+    padding: 0 5px;
+}
+
+.wishlist-card .card-tag {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 6px;
+    padding: 0 5px;
+}
+
+.card-level {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 40px;
+	height: auto;
+	z-index: 2;
+}
+
+.wishlist-card-link {
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit;        /* 글씨 색 유지 */
+}
+
+.wishlist-card-link:active,
+.wishlist-card-link:focus,
+.wishlist-card-link:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+
+/*----*/
+/* 리뷰 카드 */
+.review-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-card {
+    display: flex;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.review-poster {
+    width: 120px;
+    height: auto;
+    object-fit: cover;
+}
+
+.review-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.review-header {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.review-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.review-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+    margin-top: 5px;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.review-card-link {
+    text-decoration: none;
+    color: inherit; /* 텍스트 색상 유지 */
+}
+
+.review-card-link:hover .review-card {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+}
+
