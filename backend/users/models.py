@@ -1,4 +1,3 @@
-# Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -11,14 +10,24 @@ TAGS = [
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
     english_level = models.PositiveIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(5)],
         null=True,
         default=None
     )
+
     like_movies = models.ManyToManyField(
         MovieData,
         blank=True,
         related_name='liked_users'
     )
+
     like_tags = models.JSONField(default=list, blank=True)
+
+    profile_image = models.ImageField(
+        upload_to="users/images",
+        default="users/images/default.png",
+        blank=True,
+        null=True
+    )

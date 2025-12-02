@@ -20,10 +20,17 @@ class UserPublicSerializer(serializers.ModelSerializer):
         child=serializers.CharField(),
         read_only=True
     )
+    profile_image = serializers.SerializerMethodField()
+
+    def get_profile_image(self, obj):
+        if obj.profile.profile_image:
+            return obj.profile.profile_image.url
+        return None
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "english_level", "like_movies", "like_tags"]
+        fields = ["id", "username", "email", "first_name", "last_name", 
+                  "english_level", "like_movies", "like_tags", "profile_image"]
 
 class RegisterSerializer(serializers.ModelSerializer):
     english_level = serializers.IntegerField(
@@ -53,4 +60,3 @@ class RegisterSerializer(serializers.ModelSerializer):
         profile.save()
 
         return user
-

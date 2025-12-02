@@ -1,12 +1,9 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .serializers import RegisterSerializer, UserPublicSerializer
@@ -35,10 +32,6 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
 class LoginView(TokenObtainPairView):
     serializer_class = UserTokenObtainPairSerializer
 
-# 토큰 갱신
-class RefreshView(TokenRefreshView):
-    pass
-
 # 로그아웃
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -47,7 +40,7 @@ class LogoutView(APIView):
         return Response({"detail": "Logged out"})
 
 
-# 사용자 정보
+# 사용자 정보 반환/수정
 class UserInfoView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -78,11 +71,15 @@ class UserInfoView(APIView):
                 if tag not in TAGS:
                     return Response({"detail": f"Invalid tag: {tag}"}, status=400)
             profile.like_tags = tags
+
+        if "profile_image" in request.FILES:
+            profile.profile_image = request.FILES["profile_image"]
             
         profile.save()
 
         return Response(UserPublicSerializer(user).data)
 
+# 영화 찜/취소
 class UpdateLikeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -105,20 +102,3 @@ class UpdateLikeView(APIView):
         profile = request.user.profile
         profile.like_movies.remove(movie)
         return Response({"detail": "Unliked"})
-    
-class LikeView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        profile = request.user.profile
-        movies = profile.like_movies.all()
-
-        movie_list = [
-            {
-                "id": movie.id,
-                "title_ko": movie.title_ko,
-            }
-            for movie in movies
-        ]
-
-        return Response(movie_list)
