@@ -1,0 +1,69 @@
+<script>
+    const API_BASE = "http://127.0.0.1:8000";
+
+    const saveBtn = document.getElementById("save-score-btn");
+    const editBtn = document.getElementById("edit-score-btn");
+    const inputSection = document.getElementById("score-input-section");
+    const resultSection = document.getElementById("score-result-section");
+
+    async function saveScoreToServer() {
+        const type = document.getElementById("test-type").value;
+        const score = document.getElementById("test-score").value;
+        const access = localStorage.getItem("access");
+
+        const res = await fetch(`${API_BASE}/api/users/save_score/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access}`
+            },
+            body: JSON.stringify({ type, score })
+        });
+
+        const data = await res.json();
+
+        if (data.level !== undefined) {
+            document.getElementById("saved-test").textContent = type.toUpperCase();
+            document.getElementById("saved-score").textContent = score;
+            document.getElementById("saved-level").textContent =
+                ["A1","A2","B1","B2","C1","C2"][data.level];
+
+            inputSection.style.display = "none";
+            resultSection.style.display = "block";
+        }
+    }
+
+    saveBtn.addEventListener("click", saveScoreToServer);
+
+    editBtn.addEventListener("click", ()=> {
+        inputSection.style.display = "block";
+        resultSection.style.display = "none";
+    });
+
+    async function loadScoreFromDB() {
+        const access = localStorage.getItem("access");
+
+        const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
+            headers: { "Authorization": `Bearer ${access}` }
+        });
+
+        const data = await res.json();
+        const level = data.english_level;
+
+        if (level === null || level === undefined) {
+            inputSection.style.display = "block";
+            resultSection.style.display = "none";
+            return;
+        }
+
+        document.getElementById("saved-level").textContent =
+            ["A1","A2","B1","B2","C1","C2"][level];
+        document.getElementById("saved-test").textContent = "";
+        document.getElementById("saved-score").textContent = "";
+
+        inputSection.style.display = "none";
+        resultSection.style.display = "block";
+    }
+
+    loadScoreFromDB();
+</script>

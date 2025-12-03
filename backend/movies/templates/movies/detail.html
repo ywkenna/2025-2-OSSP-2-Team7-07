@@ -1,0 +1,12 @@
+{% load static %}
+
+<h1>{{ movie.title_ko }} ({{ movie.title_en }})</h1>
+<p>
+    <img src="{% static movie.image %}" width="100"><br>
+    {{ movie.year }}<br>
+    {{ movie.plot }}<br>
+    {{ movie.genre }}<br>
+    {{ movie.runtime }}<br>
+    {{ movie.difficulty }}<br>
+    {{movie.pron_acc}}
+</p>
