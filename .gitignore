@@ -1,4 +1,9 @@
 .venv/
+venv/
+backend/venv/
 .env
 db.sqlite3
 __pycache__/
+.vscode/
+node_modules/
+

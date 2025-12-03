@@ -2,6 +2,9 @@ from django.shortcuts import render
 from .models import MovieData
 from django.db.models import Q
 from django.http import HttpResponse
+from django.http import JsonResponse
+from .models import MovieData
+from django.conf import settings
 
 # 전체 영화 목록 -> home.html
 def home(request):
@@ -44,7 +47,7 @@ def search(request):
         )
 
     #위에서 만든 CATEGORY_MAP을 기반으로 장르(키워드) 필터링
-    if genre_category:
+    if genre_category and genre_category != "전체":
         tags = CATEGORY_MAP.get(genre_category, [])
         if tags:
             genre_filter = Q()
@@ -53,8 +56,9 @@ def search(request):
             movies = movies.filter(genre_filter)
 
     #난이도 필터링
-    if difficulty:
+    if difficulty and difficulty != "전체":
         movies = movies.filter(difficulty=difficulty)
+
 
     return render(request, 'movies/home.html', {'movies': movies})
 
@@ -121,3 +125,104 @@ def recommend(request):
     movies = MovieData.objects.filter(difficulty=difficulty)
 
     return render(request, 'movies/home.html', {'movies': movies})
+
+from django.http import JsonResponse
+
+def movies_api(request):
+    movies = MovieData.objects.all()
+    results = []
+
+    for m in movies:
+        # m.image가 ImageFieldFile인지 문자열인지 구분
+        if hasattr(m.image, 'url'):
+            image_path = m.image.url
+        else:
+            image_path = m.image  # 문자열로 DB에 저장된 경우
+
+        # 절대 URL 생성
+        image_url = f"{request.scheme}://{request.get_host()}{settings.STATIC_URL}{image_path.lstrip('/')}"
+
+
+        results.append({
+            "id": m.id,
+            "title_ko": m.title_ko,
+            "title_en": m.title_en,
+            "year": m.year,
+            "runtime": m.runtime,
+            "genre": m.genre,
+            "difficulty": m.difficulty,
+            "plot": m.plot,
+            "image": image_url,
+        })
+
+    return JsonResponse(results, safe=False)
+
+def movie_detail_api(request, id):
+    try:
+        m = MovieData.objects.get(id=id)
+
+        if hasattr(m.image, 'url'):
+            image_path = m.image.url
+        else:
+            image_path = m.image
+
+        image_url = request.build_absolute_uri(image_path) if image_path else None
+
+        return JsonResponse({
+            "id": m.id,
+            "title_ko": m.title_ko,
+            "title_en": m.title_en,
+            "year": m.year,
+            "runtime": m.runtime,
+            "genre": m.genre,
+            "difficulty": m.difficulty,
+            "plot": m.plot,
+            "image": image_url,
+        })
+
+    except MovieData.DoesNotExist:
+        return JsonResponse({"error": "Movie not found"}, status=404)
+def movies_search_api(request):
+    query = request.GET.get("query", "")
+    genre = request.GET.get("genre", "")
+    difficulty = request.GET.get("difficulty", "")
+
+    movies = MovieData.objects.all()
+
+    if query:
+        movies = movies.filter(
+            Q(title_ko__icontains=query) |
+            Q(title_en__icontains=query)
+        )
+
+    if genre and genre != "전체":
+        movies = movies.filter(genre__icontains=genre)
+
+    if difficulty and difficulty != "전체":
+        try:
+            movies = movies.filter(difficulty=int(difficulty))
+        except:
+            pass
+
+    results = []
+    for m in movies:
+        if hasattr(m.image, 'url'):
+            image_path = m.image.url
+        else:
+            image_path = m.image
+
+        image_url = request.build_absolute_uri(image_path) if image_path else None
+
+        results.append({
+            "id": m.id,
+            "title_ko": m.title_ko,
+            "title_en": m.title_en,
+            "year": m.year,
+            "runtime": m.runtime,
+            "genre": m.genre,
+            "difficulty": m.difficulty,
+            "plot": m.plot,
+            "image": image_url,
+        })
+
+    return JsonResponse(results, safe=False)

@@ -1,0 +1,786 @@
+/*전체, 상단 바*/
+
+body {
+	padding-top: 60px;
+}
+
+.top-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 60px;
+	background-color: #ffffff; 
+	display: flex;
+	align-items: center;
+	padding-left: 50px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	z-index: 9999;
+}
+
+.top-login-btn {
+    width: 80px;       
+    height: 40px;      
+    margin-right: 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #f2f2f2; 
+    cursor: pointer;
+    text-decoration: none;  
+    color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; 
+}
+
+.top-signup-btn {
+    width: 96px;       
+    height: 40px;      
+    margin-right: 110px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #f2f2f2; 
+    cursor: pointer;
+    text-decoration: none;  
+    color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;    
+}
+
+.top-mypage-btn {
+    width: 112px;       
+    height: 40px;      
+    margin-right: 90px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #f2f2f2; 
+    cursor: pointer;
+    text-decoration: none;  
+    color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;    
+}
+
+.logo {
+	height: 40px;
+	margin-right: 50px;
+}
+
+.nav-menu {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	flex-grow: 1;
+}
+
+.search-input {
+	padding: 8px 12px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	width: 250px;
+	box-sizing: border-box;
+	margin-right:20px;
+}
+
+
+/*홈페이지*/
+
+.main-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin: 2%;
+	gap: 40px;
+}
+
+.card-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 40px;
+	flex: 1;
+}
+
+.card {
+	width: 250px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+	overflow: hidden;
+	text-align: center;
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	position: relative;
+	transition: all 0.2s;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.card-img {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+.card-name {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 10px 0 4px 0;
+	padding: 5px;
+}
+
+.card-ename {
+	font-size: 14px;
+	color: #555;
+	margin-bottom: 6px;
+	padding: 5px;
+}
+
+.card-tag {
+	font-size: 12px;
+	color: #777;
+	margin-bottom: 10px;
+	padding: 5px;
+}
+
+.card-level {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	width: 40px;
+	height: auto;
+	z-index: 2;
+}
+
+.filter-box {
+	width: 240px;
+	background: #ffffff;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+	border-radius: 12px;
+	padding: 20px;
+	box-sizing: border-box;
+	position: sticky;
+	top: 80px;
+}
+
+.filter-box h3 {
+	font-size: 18px;
+	margin-bottom: 15px;
+}
+
+.filter-box label {
+	display: block;
+	margin: 10px 0 5px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.filter-box select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 14px;
+	background: #f9f9f9;
+}
+
+.filter-btn {
+	width: 100%;
+	margin-top: 15px;
+	padding: 10px;
+	background-color: #d7dcff;
+	border: none;
+	border-radius: 8px;
+	font-size: 15px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.filter-btn:hover {
+	background-color: #c0c6ff;
+}
+
+
+/*상세페이지*/
+
+.box1 { 
+	position: relative; 
+    height: auto;  
+    margin:2%;
+	padding:20px;
+    box-sizing: border-box; 
+    overflow:hidden;
+    align-items: baseline;
+	background-color: #ffffff;
+	border-radius: 20px;
+	box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.poster-img {
+	height: 300px;
+	float: left;
+	margin-right: 20px;	
+	
+}
+
+.box1-name {
+	font-size: 30px;
+	overflow: hidden;
+	margin-bottom: 10px;
+	margin-right: 10px;
+}
+
+.box1-difficulty {
+	display: inline-block;
+	background-color: #d7dcff;
+	padding: 5px 10px;
+	margin-bottom: 10px;
+	border-radius: 10px;
+	font-size: 14px;
+}
+
+.box1-e-name {
+	overflow: hidden;
+}
+
+.box1-tag {
+	margin-top: 10px;
+	overflow: hidden;
+}
+
+.box1-tag > div {
+	display: inline-block;
+	background-color: #ddd;
+	padding: 5px 10px;
+	margin-right: 5px;
+	border-radius: 10px;
+	font-size: 14px;
+}
+
+.box1-plot {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+
+.box1-link {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.box1-link img {
+	height: 50px;
+	cursor: pointer;
+	object-fit: cover;
+}
+
+.box2-detail {
+	margin-top: 40px;
+	background-color: #ffffff;
+	border-radius: 20px;
+	padding: 25px;
+	box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+	margin-left:2%;
+	margin-right:2%;
+}
+
+.box2-detail h3 {
+	font-size: 22px;
+	font-weight: 700;
+	margin-bottom: 25px;
+	border-left: 5px solid #5b7fff;
+	padding-left: 10px;
+}
+
+.detail-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+	gap: 30px;
+}
+
+.detail-card {
+	background: #f8f9ff;
+	border-radius: 15px;
+	padding: 20px;
+	box-shadow: inset 0 0 6px rgba(90,100,255,0.08);
+}
+
+.detail-card h4 {
+	font-size: 17px;
+	margin-bottom: 12px;
+	color: #334;
+}
+
+.bar-group {
+	margin-bottom: 10px;
+}
+
+.bar-label {
+	font-size: 13px;
+	color: #555;
+	margin-bottom: 3px;
+}
+
+.bar {
+	background-color: #e6e9ff;
+	border-radius: 10px;
+	height: 10px;
+	overflow: hidden;
+}
+
+.bar-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #6a7cff, #4d63ff);
+	border-radius: 10px;
+}
+
+.stat-desc {
+	font-size: 13px;
+	color: #777;
+	margin-top: 6px;
+}
+
+
+/*로그인페이지*/
+
+.login-container {
+    width: 100%;
+    max-width: 360px;
+    margin: 70px auto 0 auto;
+    padding: 40px 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.login-btn:hover {
+    background-color: #e5e5e5;
+}
+
+.signup-box {
+    margin-top: 40px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.signup-box a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    padding: 10px 20px;
+    display: inline-block;
+    border-radius: 8px;
+    background-color: #f7f7f7;
+}
+
+.signup-box a:hover {
+    background-color: #eaeaea;
+}
+
+/*회원가입페이지*/
+
+.signup-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto 0 auto;
+    padding: 40px 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.signup-container h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.signup-container .input-group {
+    margin-bottom: 18px;
+}
+
+.signup-container .input-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.signup-container .input-group input,
+.signup-container .input-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.signup-btn {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.signup-btn:hover {
+    background-color: #e5e5e5;
+}
+
+/*마이페이지*/
+.mypage-container {
+    max-width: 900px;
+    margin: 50px auto 50px;
+    padding: 0 20px;
+}
+
+.profile-box {
+    display: flex;
+    align-items: center;
+    padding: 28px;
+    border-radius: 18px;
+    background: #ffffff; 
+    border: 1px solid #ececec; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04); 
+    margin-bottom: 35px;
+}
+
+.profile-info h2 {
+    margin: 0 0 6px;
+    font-size: 21px;
+    font-weight: 600;
+    color: #333;
+}
+
+.profile-info p {
+    margin: 3px 0;
+    color: #777; 
+    font-size: 14.5px;
+}
+
+#profile-input {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.profile-img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    border: 2px solid #e8e8ff;
+    background: #fafafa;
+    margin-right: 25px;
+    cursor: pointer; 
+}
+
+.mypage-tabs {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #e5e5e5; 
+    margin-bottom: 25px;
+    padding-bottom: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+    transition: 0.2s;
+    border-bottom: 3px solid transparent; 
+}
+
+.tab-btn:hover {
+    color: #333;
+}
+
+.tab-btn.active {
+    color: #222;
+    font-weight: 600;
+    border-bottom: 3px solid #b8bfff; 
+}
+
+#score-result-section {
+    display: none; 
+    margin-top: 15px;
+    padding: 20px;
+    border-radius: 15px;
+    background: #f7f7ff;
+    border: 1px solid #d9dbff;
+}
+
+
+#score-result-section p {
+    margin: 8px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+
+#edit-score-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #b5baff;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#edit-score-btn:hover {
+    background: #9ca3ff;
+}
+
+
+#score-input-section {
+    display: block; 
+    margin-top: 15px;
+}
+
+
+#score-input-section select,
+#score-input-section input {
+    display: block; 
+    width: 100%;
+    margin-top:10px;
+    margin-bottom: 20px; /* 항목 간 간격 */
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 12px;
+    border: 1px solid #cfd3ff;
+    background: #f7f7ff;
+    box-sizing: border-box;
+}
+
+
+#save-score-btn {
+    display: block; 
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #b8bfff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+
+#save-score-btn:hover {
+    background: #9ca3ff;
+}
+
+.content-box {
+    display: none;
+}
+
+.content-box.show {
+    display: block;
+}
+
+.wishlist-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	flex: 1;
+}
+
+.wishlist-card {
+	width: 180px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+	overflow: hidden;
+	text-align: center;
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	position: relative;
+	transition: all 0.2s;
+}
+
+
+.wishlist-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.wishlist-card img.card-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.wishlist-card .card-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 8px 0 4px 0;
+    padding: 0 5px;
+}
+
+.wishlist-card .card-ename {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 4px;
+    padding: 0 5px;
+}
+
+.wishlist-card .card-tag {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 6px;
+    padding: 0 5px;
+}
+
+.card-level {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 40px;
+	height: auto;
+	z-index: 2;
+}
+
+.wishlist-card-link {
+    text-decoration: none; 
+    color: inherit;        
+}
+
+.wishlist-card-link:active,
+.wishlist-card-link:focus,
+.wishlist-card-link:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+.review-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-card {
+    display: flex;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.review-poster {
+    width: 120px;
+    height: auto;
+    object-fit: cover;
+}
+
+.review-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.review-header {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.review-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.review-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+    margin-top: 5px;
+    text-overflow: ellipsis;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.review-card-link {
+    text-decoration: none;
+    color: inherit; 
+}
+
+.review-card-link:hover .review-card {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+}
+
