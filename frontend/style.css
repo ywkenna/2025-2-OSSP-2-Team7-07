@@ -1,3 +1,8 @@
+/*전체, 상단 바*/
+
+body {
+	padding-top: 60px;
+}
 
 .top-bar {
 	position: fixed;
@@ -9,35 +14,82 @@
 	display: flex;
 	align-items: center;
 	padding-left: 50px;
-	padding-right:30px;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 	z-index: 9999;
 }
 
 .top-login-btn {
-	margin-right:20px;
-    margin-left: auto;
+    width: 80px;       
+    height: 40px;      
+    margin-right: 20px;
     font-size: 16px;
-    padding: 8px 16px;
     border-radius: 8px;
     background-color: #f2f2f2; 
     cursor: pointer;
     text-decoration: none;  
     color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; 
 }
 
 .top-signup-btn {
-	margin-right:90px;
+    width: 96px;       
+    height: 40px;      
+    margin-right: 110px;
     font-size: 16px;
-    padding: 8px 16px;
     border-radius: 8px;
     background-color: #f2f2f2; 
     cursor: pointer;
     text-decoration: none;  
     color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;    
+}
+
+.top-mypage-btn {
+    width: 112px;       
+    height: 40px;      
+    margin-right: 90px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #f2f2f2; 
+    cursor: pointer;
+    text-decoration: none;  
+    color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;    
+}
+
+.logo {
+	height: 40px;
+	margin-right: 50px;
+}
+
+.nav-menu {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	flex-grow: 1;
+}
+
+.search-input {
+	padding: 8px 12px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	width: 250px;
+	box-sizing: border-box;
+	margin-right:20px;
 }
 
 
+/*홈페이지*/
 
 .main-content {
 	display: flex;
@@ -157,43 +209,9 @@
 .filter-btn:hover {
 	background-color: #c0c6ff;
 }
-.logo {
-	height: 40px;
-	margin-right: 50px;
-}
-
-.nav-menu {
-	display: flex;
-	align-items: center;
-	gap: 30px;
-	flex-grow: 1;
-}
-
-.nav-menu a {
-	text-decoration: none;
-	color: #333;
-	font-weight: 500;
-	font-size: 16px;
-}
-
-.search-input {
-	padding: 8px 12px;
-	font-size: 16px;
-	border: 1px solid #ccc;
-	border-radius: 6px;
-	width: 250px;
-	box-sizing: border-box;
-}
 
 
-
-/*********************************/
-
-
-body {
-	min-width: 600px;
-	padding-top: 60px;
-}
+/*상세페이지*/
 
 .box1 { 
 	position: relative; 
@@ -334,7 +352,7 @@ body {
 }
 
 
-/*******************/
+/*로그인페이지*/
 
 .login-container {
     width: 100%;
@@ -407,12 +425,12 @@ body {
     background-color: #eaeaea;
 }
 
-/*******************/
+/*회원가입페이지*/
 
 .signup-container {
     width: 100%;
     max-width: 400px;
-    margin: 40px auto 0 auto;
+    margin: 50px auto 0 auto;
     padding: 40px 30px;
     background: #ffffff;
     border-radius: 12px;
@@ -461,32 +479,22 @@ body {
     background-color: #e5e5e5;
 }
 
-/* ---------- 마이페이지 공통 ---------- */
+/*마이페이지*/
 .mypage-container {
     max-width: 900px;
     margin: 50px auto 50px;
     padding: 0 20px;
 }
 
-/* ---------- 기본 정보 카드 ---------- */
 .profile-box {
     display: flex;
     align-items: center;
     padding: 28px;
     border-radius: 18px;
-    background: #ffffff; /* 완전 흰색으로 깔끔 */
-    border: 1px solid #ececec; /* 최소한의 경계 */
-    box-shadow: 0 3px 10px rgba(0,0,0,0.04); /* 아주 약한 그림자 */
+    background: #ffffff; 
+    border: 1px solid #ececec; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04); 
     margin-bottom: 35px;
-}
-
-.profile-img {
-    width: 85px;
-    height: 85px;
-    border-radius: 50%;
-    border: 2px solid #e8e8ff; /* 파란색 거의 없는 연보라 */
-    background: #fafafa;
-    margin-right: 25px;
 }
 
 .profile-info h2 {
@@ -498,7 +506,7 @@ body {
 
 .profile-info p {
     margin: 3px 0;
-    color: #777; /* 부드러운 회색 */
+    color: #777; 
     font-size: 14.5px;
 }
 
@@ -516,15 +524,13 @@ body {
     border: 2px solid #e8e8ff;
     background: #fafafa;
     margin-right: 25px;
-    cursor: pointer; /* 클릭 가능 표시 */
-    transition: transform 0.2s;
+    cursor: pointer; 
 }
 
-/* ---------- 탭 메뉴 ---------- */
 .mypage-tabs {
     display: flex;
     justify-content: space-around;
-    border-bottom: 1px solid #e5e5e5; /* 전체 라인 */
+    border-bottom: 1px solid #e5e5e5; 
     margin-bottom: 25px;
     padding-bottom: 4px;
 }
@@ -538,7 +544,7 @@ body {
     color: #666;
     cursor: pointer;
     transition: 0.2s;
-    border-bottom: 3px solid transparent; /* 기본 보더 숨김 */
+    border-bottom: 3px solid transparent; 
 }
 
 .tab-btn:hover {
@@ -548,13 +554,11 @@ body {
 .tab-btn.active {
     color: #222;
     font-weight: 600;
-    border-bottom: 3px solid #b8bfff; /* 아주 연한 포인트 라인만 */
+    border-bottom: 3px solid #b8bfff; 
 }
 
-
-/* ---------- 영어 성적 결과 섹션 ---------- */
 #score-result-section {
-    display: none; /* 기본 숨김 */
+    display: none; 
     margin-top: 15px;
     padding: 20px;
     border-radius: 15px;
@@ -590,14 +594,14 @@ body {
 
 
 #score-input-section {
-    display: block; /* block으로 세로 배치 확실히 */
+    display: block; 
     margin-top: 15px;
 }
 
 
 #score-input-section select,
 #score-input-section input {
-    display: block; /* 각 항목을 한 줄씩 차지하게 */
+    display: block; 
     width: 100%;
     margin-top:10px;
     margin-bottom: 20px; /* 항목 간 간격 */
@@ -611,7 +615,7 @@ body {
 
 
 #save-score-btn {
-    display: block; /* 한 줄 차지 */
+    display: block; 
     width: 100%;
     padding: 14px;
     border: none;
@@ -635,8 +639,6 @@ body {
 .content-box.show {
     display: block;
 }
-
-/*--*/
 
 .wishlist-container {
 	display: flex;
@@ -702,8 +704,8 @@ body {
 }
 
 .wishlist-card-link {
-    text-decoration: none; /* 밑줄 제거 */
-    color: inherit;        /* 글씨 색 유지 */
+    text-decoration: none; 
+    color: inherit;        
 }
 
 .wishlist-card-link:active,
@@ -713,10 +715,6 @@ body {
     color: inherit;
 }
 
-
-
-/*----*/
-/* 리뷰 카드 */
 .review-container {
     display: flex;
     flex-direction: column;
@@ -766,6 +764,7 @@ body {
     color: #333;
     line-height: 1.4;
     margin-top: 5px;
+    text-overflow: ellipsis;
 }
 
 .review-date {
@@ -776,7 +775,7 @@ body {
 
 .review-card-link {
     text-decoration: none;
-    color: inherit; /* 텍스트 색상 유지 */
+    color: inherit; 
 }
 
 .review-card-link:hover .review-card {
