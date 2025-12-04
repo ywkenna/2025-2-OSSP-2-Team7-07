@@ -27,8 +27,8 @@ function renderMovieDetail(movie) {
 
   // 포스터
   if (posterEl) {
-    const posterUrl = `${API_BASE}/${movie.image}`;
-    posterEl.src = posterUrl;
+    // movie.image 자체가 절대 URL이므로 그대로 사용
+    posterEl.src = movie.image;
     posterEl.alt = movie.title_ko;
   }
 

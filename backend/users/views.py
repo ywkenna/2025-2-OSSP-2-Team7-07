@@ -3,7 +3,10 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .serializers import RegisterSerializer, UserPublicSerializer
@@ -31,6 +34,10 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class LoginView(TokenObtainPairView):
     serializer_class = UserTokenObtainPairSerializer
+
+# 토큰 갱신
+class RefreshView(TokenRefreshView):
+    pass
 
 # 로그아웃
 class LogoutView(APIView):
@@ -102,3 +109,44 @@ class UpdateLikeView(APIView):
         profile = request.user.profile
         profile.like_movies.remove(movie)
         return Response({"detail": "Unliked"})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def save_score(request):
+    user = request.user
+    exam_type = request.data.get("type")
+    score = float(request.data.get("score", 0))
+
+    # CEFR 매핑
+    def convert_to_cefr(type, score):
+        if type == "toeic":
+            if score >= 945: return 5
+            if score >= 785: return 4
+            if score >= 550: return 3
+            if score >= 225: return 2
+            return 1
+
+        if type == "toefl":
+            if score >= 95: return 5
+            if score >= 72: return 4
+            if score >= 42: return 3
+            return 2
+
+        if type == "ielts":
+            if score > 8.0: return 5
+            if score >= 7.0: return 4
+            if score >= 5.5: return 3
+            if score >= 4.0: return 2
+            if score >= 2.5: return 1
+            return 0
+
+        return 0
+
+    level = convert_to_cefr(exam_type, score)
+    user.english_level = level
+    user.save()
+
+    return Response({
+        "message": "Saved",
+        "level": level
+    })

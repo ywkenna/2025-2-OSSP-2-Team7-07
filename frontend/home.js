@@ -1,6 +1,6 @@
 console.log("home.js loaded!");
 
-
+const API_BASE = "http://127.0.0.1:8000";
 
 const cardContainer = document.querySelector(".card-container");
 const searchInput = document.getElementById("search-query");
