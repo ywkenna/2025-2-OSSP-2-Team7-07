@@ -9,20 +9,21 @@
     async function saveScoreToServer() {
         const type = document.getElementById("test-type").value;
         const score = document.getElementById("test-score").value;
+        const level = convert_to_cefr(type, score)
         const access = localStorage.getItem("access");
 
-        const res = await fetch(`${API_BASE}/api/users/save_score/`, {
-            method: "POST",
+        const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access}`
             },
-            body: JSON.stringify({ type, score })
+            body: JSON.stringify({ english_level: level })
         });
 
         const data = await res.json();
 
-        if (data.level !== undefined) {
+        if (data.english_level !== undefined) {
             document.getElementById("saved-test").textContent = type.toUpperCase();
             document.getElementById("saved-score").textContent = score;
             document.getElementById("saved-level").textContent =
@@ -63,6 +64,34 @@
 
         inputSection.style.display = "none";
         resultSection.style.display = "block";
+    }
+
+    function convert_to_cefr(type, score) {
+        if (type == "toeic") {
+            if (score >= 945) return 5
+            if (score >= 785) return 4
+            if (score >= 550) return 3
+            if (score >= 225) return 2
+            return 1
+        }
+
+        if (type == "toefl") {
+            if (score >= 95) return 5
+            if (score >= 72) return 4
+            if (score >= 42) return 3
+            return 2
+        }
+
+        if (type == "ielts") {
+            if (score > 8.0) return 5
+            if (score >= 7.0) return 4
+            if (score >= 5.5) return 3
+            if (score >= 4.0) return 2
+            if (score >= 2.5) return 1
+            return 0
+        }
+
+        return 0
     }
 
     loadScoreFromDB();

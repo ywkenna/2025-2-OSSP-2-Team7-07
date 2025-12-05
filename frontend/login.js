@@ -19,7 +19,6 @@ document.querySelector(".login-btn").addEventListener("click", () => {
         if (data.access) {
             // 토큰 저장
             localStorage.setItem("access", data.access);
-            localStorage.setItem("refresh", data.refresh);
             localStorage.setItem("username", data.user.username);
 
             alert("로그인 성공!");

@@ -16,39 +16,9 @@ async function checkAuth() {
         if (res.ok) {
             return true;
         } else {
-            // access 만료 → refresh 사용
-            return await refreshToken();
+
         }
     } catch {
-        return false;
-    }
-}
-
-// --------------------------
-// 2) Refresh Token으로 access 재발급
-// --------------------------
-async function refreshToken() {
-    const refresh = localStorage.getItem("refresh");
-    if (!refresh) return false;
-
-    try {
-        const res = await fetch(`${API_BASE}/api/users/refresh/`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ refresh })
-        });
-
-        const data = await res.json();
-
-        if (data.access) {
-            localStorage.setItem("access", data.access);
-            return true;
-        } else {
-            logout();
-            return false;
-        }
-    } catch {
-        logout();
         return false;
     }
 }
@@ -58,7 +28,6 @@ async function refreshToken() {
 // --------------------------
 function logout() {
     localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
     localStorage.removeItem("username");
     window.location.href = "login.html";
 }
