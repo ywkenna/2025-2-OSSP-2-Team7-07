@@ -10,27 +10,45 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserPublicSerializer(serializers.ModelSerializer):
     english_level = serializers.CharField(source="profile.english_level", read_only=True)
+    like_movies = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        source="profile.like_movies"
+    )
+    like_tags = serializers.ListField(
+        source="profile.like_tags",
+        child=serializers.CharField(),
+        read_only=True
+    )
+    profile_image = serializers.SerializerMethodField()
+
+    def get_profile_image(self, obj):
+        if obj.profile.profile_image:
+            return obj.profile.profile_image.url
+        return None
 
     class Meta:
         model = User
-        fields = ["id", "username", "first_name", "last_name", "english_level"]
+        fields = ["id", "username", "email", "first_name", "last_name", 
+                  "english_level", "like_movies", "like_tags", "profile_image"]
 
 class RegisterSerializer(serializers.ModelSerializer):
     english_level = serializers.IntegerField(
         required=False, 
         allow_null = True,
     )
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=1)
 
     class Meta:
         model = User
-        fields = ["username", "password", "first_name", "english_level"]
+        fields = ["username", "password", "email", "first_name", "english_level"]
 
     def create(self, validated_data):
         password = validated_data.pop("password")
 
         user = User(
             username=validated_data["username"],
+            email=validated_data.get("email", ""),
             first_name=validated_data.pop("first_name"),
             last_name=""
         )
@@ -42,4 +60,3 @@ class RegisterSerializer(serializers.ModelSerializer):
         profile.save()
 
         return user
-

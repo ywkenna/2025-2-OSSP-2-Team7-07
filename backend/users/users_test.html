@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>회원가입 / 로그인 테스트</title>
+</head>
+<body>
+
+<div class="container">
+    <h2>회원가입</h2>
+    <form id="registerForm" onsubmit="register(event)">
+
+        <label>이름*</label>
+        <input type="text" name="first_name" required /><br/>
+
+        <label>아이디*</label>
+        <input type="text" name="username" required /><br/>
+
+        <label>비밀번호*</label>
+        <input type="password" name="password" required /><br/>
+
+        <label>이메일</label>
+        <input type="email" name="email" /><br/>
+
+        <label>영어레벨</label>
+        <input type="number" name="english_level" /><br/>
+
+        <button type="submit">회원가입</button>
+    </form>
+
+    <h2 id="loginTitle">로그인</h2>
+    <form id="loginForm" onsubmit="login(event)">
+        <label>아이디</label>
+        <input type="text" name="username" required /><br/>
+
+        <label>비밀번호</label>
+        <input type="password" name="password" required /><br/>
+
+        <button type="submit">로그인</button>
+    </form>
+
+    <div id="userBox" class="hidden">
+        <div class="userinfo" id="userInfo"></div>
+    </div>
+</div>
+
+<script>
+const API = "http://localhost:8000";
+
+// 회원가입
+async function register(e) {
+    e.preventDefault();
+    const form = e.target;
+    const body = {
+        username: form.username.value,
+        password: form.password.value,
+        first_name: form.first_name.value,
+        email: form.email.value,
+        english_level: form.english_level.value === "" ? null : Number(form.english_level.value)
+    };
+
+    const res = await fetch(`${API}/api/users/register/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+        alert("회원가입 성공");
+        form.reset();
+    } else {
+    const data = await res.json();
+    console.log(data);
+
+    const firstKey = Object.keys(data)[0];
+    const message = data[firstKey][0];
+
+    alert(`회원가입 실패: ${message}`);
+    }
+}
+
+
+// 로그인
+async function login(e) {
+    e.preventDefault();
+    const form = e.target;
+    const body = {
+        username: form.username.value,
+        password: form.password.value,
+    };
+
+    const res = await fetch(`${API}/api/users/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        localStorage.setItem("access", data.access);
+        alert("로그인 성공");
+        form.reset();
+        loadUserInfo();
+    } else {
+        alert("로그인 실패");
+    }
+}
+
+// 로그아웃
+async function logout() {
+    alert("로그아웃 성공");
+    localStorage.removeItem("access");
+    document.getElementById("userInfo").innerHTML = ``;
+}
+
+// 로그인 상태 확인 후 정보 표시
+async function loadUserInfo() {
+    const access = localStorage.getItem("access");
+    if (!access) {
+        return;
+    }
+
+    const res = await fetch(`${API}/api/users/userinfo/`, {
+        headers: { "Authorization": `Bearer ${access}` }
+    });
+
+    if (!res.ok) {
+        return;
+    }
+
+    const userdata = await res.json();
+
+    document.getElementById("userInfo").innerHTML = `
+        <h2>사용자 정보</h2>
+        <img src="${API}${userdata.profile_image}" width="120" /><br/>
+        <input type="file" id="updateImageInput" accept="image/*">
+        <button onclick="updateImage()">수정</button><br/>
+        아이디: ${userdata.username}<br/>
+        이름: ${userdata.first_name}<br/>
+        Email: ${userdata.email}<br/>
+
+        영어레벨: ${userdata.english_level}<br/>
+        <input id="updateLevelInput" type="number" />
+        <button onclick="updateLevel()">수정</button><br/>
+        <br/>
+        좋아하는 태그 목록: ${userdata.like_tags}<br/><br/>
+        <label><input type="checkbox" class="tag-check" value="액션/스릴러"> 액션/스릴러</label>
+        <label><input type="checkbox" class="tag-check" value="드라마/감성"> 드라마/감성</label>
+        <label><input type="checkbox" class="tag-check" value="SF/판타지"> SF/판타지</label><br/>
+        <label><input type="checkbox" class="tag-check" value="코미디"> 코미디</label>
+        <label><input type="checkbox" class="tag-check" value="역사/전쟁"> 역사/전쟁</label>
+        <label><input type="checkbox" class="tag-check" value="애니메이션"> 애니메이션</label>
+        <label><input type="checkbox" class="tag-check" value="기타"> 기타</label><br/>
+        <button onclick="updateTags()">수정</button><br/>
+        <br/>
+        찜한 영화 목록: ${userdata.like_movies}<br/>
+        <input id="updateLikeInput" type="number"/>
+        <button onclick="likeMovie()">추가</button>
+        <button onclick="unlikeMovie()">삭제</button><br/>
+        <br/>
+        <button onclick="logout()">로그아웃</button>
+    `;
+}
+
+// 영어 레벨 수정
+async function updateLevel() {
+    const access = localStorage.getItem("access");
+    const newLevel = Number(document.getElementById("updateLevelInput").value);
+
+    const res = await fetch(`${API}/api/users/userinfo/`, {
+        method: "PATCH",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({ english_level: newLevel })
+    });
+
+    if (res.ok) {
+        alert("영어레벨 수정 성공");
+        loadUserInfo();
+    }
+}
+
+// 좋아하는 영화 태그 수정
+async function updateTags() {
+    const access = localStorage.getItem("access");
+    const selectedTags = Array.from(document.querySelectorAll(".tag-check:checked"))
+        .map(c => c.value);
+
+    const res = await fetch(`${API}/api/users/userinfo/`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+            body: JSON.stringify({
+            like_tags: selectedTags
+        })
+    })
+
+    if(res.ok) {
+        alert("태그 수정 성공");
+        loadUserInfo();
+    }
+}
+
+// 영화 찜
+async function likeMovie() {
+    const access = localStorage.getItem("access");
+    const movieId = Number(document.getElementById("updateLikeInput").value);
+
+    const res = await fetch(`${API}/api/users/like/${movieId}/`, {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        }
+    })
+
+    if(res.ok) {
+        alert("영화 찜 성공");
+        loadUserInfo();
+    }
+}
+
+// 영화 찜 취소
+async function unlikeMovie() {
+    const access = localStorage.getItem("access");
+    const movieId = Number(document.getElementById("updateLikeInput").value);
+
+    const res = await fetch(`${API}/api/users/like/${movieId}/`, {
+        method: "DELETE",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        }
+    })
+
+    if(res.ok) {
+        alert("영화 찜 취소 성공");
+        loadUserInfo();
+    }
+}
+
+// 프로필 사진 수정
+async function updateImage() {
+    const access = localStorage.getItem("access");
+    const fileInput = document.getElementById("updateImageInput");
+
+    if (fileInput.files.length === 0) {
+        alert("이미지 파일 미선택");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("profile_image", fileInput.files[0]);
+
+    const res = await fetch(`${API}/api/users/userinfo/`, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `Bearer ${access}`
+        },
+        body: formData
+    });
+
+    if (res.ok) {
+        alert("프로필 이미지 수정 완료");
+        loadUserInfo();
+    } else {
+        alert("프로필 이미지 수정 실패");
+    }
+}
+
+// 페이지가 로드되면 로그인 상태 확인
+loadUserInfo();
+</script>
+
+</body>
+</html>
