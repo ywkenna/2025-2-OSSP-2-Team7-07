@@ -225,81 +225,12 @@ def movie_detail_api(request, id):
 #     # 점수 숫자 변환
 #     try:
 #         score = float(score)
-#     except (TypeError, ValueError):
-#         return JsonResponse({"error": "점수는 숫자로 입력해주세요."}, status=400)
-
-#     # 시험 종류별 난이도 매핑
-#     if test_type == "toeic":
-#         level = score_to_level_toeic(score)
-#     elif test_type == "toefl":
-#         level = score_to_level_toefl(score)
-#     elif test_type == "ielts":
-#         level = score_to_level_ielts(score)
-
-#     #잘못된 점수를 입력한 경우
-#     if level is None:
-#         return JsonResponse({"error": "유효하지 않은 점수 범위입니다."}, status=400)
-
-    
-
-#     movies = MovieData.objects.filter(difficulty=level)
-
-#     return JsonResponse(list(movies.values()), safe=False)
-
-
-# def score_to_level_toeic(score):
-    
-#     if not (0 <= score <= 990):
-#         return None
-#     if 0 <=score <= 545:
-#         return 1
-#     elif score <= 780:
-#         return 2
-#     elif score <= 940:
-#         return 3
-#     else: 
-#         return 4
-
-
-# def score_to_level_toefl(score):
-   
-#     if not (0 <= score <= 120):
-#         return None
-   
-#     if 0 <= score <= 41:
-#         return 1
-#     elif score <= 71:
-#         return 2
-#     elif score <= 94:
-#         return 3
-#     else :
-#         return 4
-    
-
-
-# def score_to_level_ielts(score):
-#     if not (0 <= score <= 9.0):
-#         return None
-    
-#     if 0 <= score < 3.5:
-#         return 1
-#     elif score < 5.0:
-#         return 2
-#     elif score < 6.5:
-#         return 3
-#     else:
-#         return 4
-
-
-
-# -----코멘트 작성 API-------
-@require_POST
-@login_required   # 회원만 댓글 작성 가능
+#     except (TypeError뷰 작성 가능
 def comment_create_api(request, movie_id):
     content = request.POST.get("content", "").strip()
 
     if not content:
-        return JsonResponse({"error": "댓글 내용을 입력해주세요."}, status=400)
+        return JsonResponse({"error": "리뷰 내용을 입력해주세요."}, status=400)
 
     try:
         movie = MovieData.objects.get(id=movie_id)
@@ -313,7 +244,7 @@ def comment_create_api(request, movie_id):
     )
 
     return JsonResponse({
-        "message": "댓글이 등록되었습니다.",
+        "message": "리뷰가 등록되었습니다.",
         "comment": {
             "user": request.user.username,
             "content": comment.content,
