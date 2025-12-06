@@ -9,6 +9,12 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
 
 # CATEGORY MAP (프론트 필터와 매칭)
 CATEGORY_MAP = {
@@ -37,7 +43,15 @@ def movies_api(request):
             image_url = m.image  
         else:
         # 상대경로 → 정적경로로 변환
-            image_url = f"{request.scheme}://{request.get_host()}/static/{m.image.lstrip('/')}"
+        # 이미지 경로 보정
+            img = m.image.strip()
+
+            # DB에 파일명만 저장되어 있으면 자동으로 movies/images/ 붙여줌
+            if not img.startswith("movies/images/"):
+                img = "movies/images/" + img.lstrip("/")
+
+            image_url = f"{request.scheme}://{request.get_host()}/static/{img}"
+
 
         results.append({
             "id": m.id,
@@ -54,14 +68,15 @@ def movies_api(request):
     return JsonResponse(results, safe=False)
 
 
+
 # ------------------------------------------------
 # 검색 API (프론트 search 기능)
 # ------------------------------------------------
 def movies_search_api(request):
-    query = request.GET.get("query", "")
-    genre = request.GET.get("genre", "")
-    difficulty = request.GET.get("difficulty", "")
-    year_range = request.GET.get("year", "")
+    query       = request.GET.get("query", "")
+    genre       = request.GET.get("genre", "")
+    difficulty  = request.GET.get("difficulty", "")
+    year_range  = request.GET.get("year", "")
     sort_option = request.GET.get("sort", "default")
 
     movies = MovieData.objects.all()
@@ -82,24 +97,43 @@ def movies_search_api(request):
                 genre_filter |= Q(genre__icontains=t)
             movies = movies.filter(genre_filter)
 
+    # -----------------------------
     # 난이도 필터
+    # -----------------------------
     if difficulty and difficulty != "전체":
-        try:
-            movies = movies.filter(difficulty=int(difficulty))
-        except:
-            pass
+        print(">>> difficulty param:", difficulty)  # 디버깅용 로그
 
-    #연도 범위 필터 
+        try:
+            d_int = int(difficulty)
+        except ValueError:
+            d_int = None
+
+        if d_int is not None:
+            # 숫자 / 문자열 두 경우 모두 고려 (0, "0")
+            movies = movies.filter(
+                Q(difficulty=d_int) | Q(difficulty=str(d_int))
+            )
+        else:
+            # 숫자로 변환이 안 되면 문자열 그대로 비교 (예: "A1")
+            movies = movies.filter(difficulty=difficulty)
+
+        print(">>> after difficulty filter count:", movies.count())
+
+    # -----------------------------
+    # 연도 범위 필터
+    # -----------------------------
     if year_range and year_range != "전체":
         try:
             start, end = year_range.split("~")
             start = int(start.strip())
-            end = int(end.strip())
+            end   = int(end.strip())
             movies = movies.filter(year__gte=start, year__lte=end)
         except:
             pass  
 
+    # -----------------------------
     # 정렬
+    # -----------------------------
     if sort_option == "difficulty_desc":
         movies = movies.order_by("-difficulty")   # 어려운 순
     elif sort_option == "difficulty_asc":
@@ -111,19 +145,15 @@ def movies_search_api(request):
     else:
         movies = movies.order_by("id")            # 기본 정렬 (id 기준)
 
-    # 이미지 포함한 JSON으로 변환
+    # -----------------------------
+    # JSON 변환
+    # -----------------------------
     results = []
     for m in movies:
-
-
         if m.image.startswith("http://") or m.image.startswith("https://"):
-        # 이미 완전한 URL인 경우
-            image_url = m.image  
+            image_url = m.image
         else:
-        # 상대경로 → 정적경로로 변환
             image_url = f"{request.scheme}://{request.get_host()}/static/{m.image.lstrip('/')}"
-
-       
 
         results.append({
             "id": m.id,
@@ -139,6 +169,7 @@ def movies_search_api(request):
 
     return JsonResponse(results, safe=False)
 
+
 # ------------------------------------------------
 #  단일 영화 JSON API
 # ------------------------------------------------
@@ -150,8 +181,15 @@ def movie_detail_api(request, id):
         # 이미 완전한 URL인 경우
         image_url = movie.image  
     else:
-        # 상대경로 → 정적경로로 변환
-        image_url = f"{request.scheme}://{request.get_host()}/static/{movie.image.lstrip('/')}"
+        # 이미지 경로 보정
+        img = movie.image.strip()
+
+        # DB에 movies/1.png 같이 저장된 경우 → movies/images/1.png 로 보정
+        if not img.startswith("movies/images/"):
+            img = "movies/images/" + img.lstrip("/")
+
+        image_url = f"{request.scheme}://{request.get_host()}/static/{img}"
+
 
 
     #코멘트 목록 추가
@@ -217,107 +255,224 @@ def movie_detail_api(request, id):
 
     return JsonResponse(result)
     
-# def movies_recommend_api(request):
-#     score = request.GET.get("score")
-#     test_type = request.GET.get("type")
-
-#     # 점수 숫자 변환
-#     try:
-#         score = float(score)
-#     except (TypeError, ValueError):
-#         return JsonResponse({"error": "점수는 숫자로 입력해주세요."}, status=400)
-
-#     # 시험 종류별 난이도 매핑
-#     if test_type == "toeic":
-#         level = score_to_level_toeic(score)
-#     elif test_type == "toefl":
-#         level = score_to_level_toefl(score)
-#     elif test_type == "ielts":
-#         level = score_to_level_ielts(score)
-
-#     #잘못된 점수를 입력한 경우
-#     if level is None:
-#         return JsonResponse({"error": "유효하지 않은 점수 범위입니다."}, status=400)
-
-    
-
-#     movies = MovieData.objects.filter(difficulty=level)
-
-#     return JsonResponse(list(movies.values()), safe=False)
 
 
-# def score_to_level_toeic(score):
-    
-#     if not (0 <= score <= 990):
-#         return None
-#     if 0 <=score <= 545:
-#         return 1
-#     elif score <= 780:
-#         return 2
-#     elif score <= 940:
-#         return 3
-#     else: 
-#         return 4
+def movies_recommend_api(request):
+    score_raw = request.GET.get("score")
+    type_raw = request.GET.get("type")
+
+    print(">>> movies_recommend_api CALLED!", {"type": type_raw, "score": score_raw})
+
+    # 1) 영화가 1편도 없으면 그냥 빈 리스트
+    qs = MovieData.objects.all()
+    if not qs.exists():
+        print(">>> no movies in DB")
+        return JsonResponse([], safe=False)
+
+    # 2) 점수 숫자 변환 실패하면: 점수 무시하고 랜덤 추천
+    try:
+        score = float(score_raw)
+    except (TypeError, ValueError):
+        print(">>> invalid score, fallback to random")
+        movies = qs.order_by("?")[:6]
+        return JsonResponse(
+            [
+                {
+                    "id": m.id,
+                    "title_ko": m.title_ko,
+                    "title_en": m.title_en,
+                    "year": m.year,
+                    "runtime": m.runtime,
+                    "genre": m.genre,
+                    "difficulty": m.difficulty,
+                    "plot": m.plot,
+                    "image": getattr(m.image, "url", m.image),
+                }
+                for m in movies
+            ],
+            safe=False,
+        )
+
+    # 3) 시험 종류별 난이도 레벨 계산 (0~5)
+    if type_raw == "toeic":
+        level = score_to_level_toeic(score)
+    elif type_raw == "toefl":
+        level = score_to_level_toefl(score)
+    elif type_raw == "ielts":
+        level = score_to_level_ielts(score)
+    else:
+        print(">>> invalid type, fallback to random")
+        movies = qs.order_by("?")[:6]
+        return JsonResponse(
+            [
+                {
+                    "id": m.id,
+                    "title_ko": m.title_ko,
+                    "title_en": m.title_en,
+                    "year": m.year,
+                    "runtime": m.runtime,
+                    "genre": m.genre,
+                    "difficulty": m.difficulty,
+                    "plot": m.plot,
+                    "image": getattr(m.image, "url", m.image),
+                }
+                for m in movies
+            ],
+            safe=False,
+        )
+
+    if level is None:
+        print(">>> level is None, fallback to random")
+        movies = qs.order_by("?")[:6]
+    else:
+        print(">>> calculated level:", level)
+
+        # 4) 1차: difficulty == level
+        movies = qs.filter(difficulty=level)
+        print(">>> difficulty == level count:", movies.count())
+
+        # 5) 문자열로 저장된 경우도 (예: "3")
+        if not movies.exists():
+            movies = qs.filter(difficulty=str(level))
+            print(">>> difficulty == str(level) count:", movies.count())
+
+        # 6) 주변 난이도(±1)까지 허용 (0~5)
+        if not movies.exists():
+            low = max(0, level - 1)
+            high = min(5, level + 1)
+            movies = qs.filter(difficulty__gte=low, difficulty__lte=high)
+            print(">>> difficulty in [%d, %d] count:" % (low, high), movies.count())
+
+        # 7) 그래도 없으면 랜덤
+        if not movies.exists():
+            print(">>> still empty, fallback to random")
+            movies = qs.order_by("?")[:6]
+
+    # 8) 최종 결과 JSON 변환
+    results = [
+        {
+            "id": m.id,
+            "title_ko": m.title_ko,
+            "title_en": m.title_en,
+            "year": m.year,
+            "runtime": m.runtime,
+            "genre": m.genre,
+            "difficulty": m.difficulty,
+            "plot": m.plot,
+            "image": getattr(m.image, "url", m.image),
+        }
+        for m in movies
+    ]
+    print(">>> final result count:", len(results))
+    return JsonResponse(results, safe=False)
 
 
-# def score_to_level_toefl(score):
-   
-#     if not (0 <= score <= 120):
-#         return None
-   
-#     if 0 <= score <= 41:
-#         return 1
-#     elif score <= 71:
-#         return 2
-#     elif score <= 94:
-#         return 3
-#     else :
-#         return 4
-    
+
+def score_to_level_toeic(score):
+    # 0 ~ 990 → 0 ~ 5로 매핑
+    if not (0 <= score <= 990):
+        return None
+
+    if score < 300:
+        return 0   # A1
+    elif score < 500:
+        return 1   # A2
+    elif score < 700:
+        return 2   # B1
+    elif score < 850:
+        return 3   # B2
+    elif score < 940:
+        return 4   # C1
+    else:
+        return 5   # C2
 
 
-# def score_to_level_ielts(score):
-#     if not (0 <= score <= 9.0):
-#         return None
-    
-#     if 0 <= score < 3.5:
-#         return 1
-#     elif score < 5.0:
-#         return 2
-#     elif score < 6.5:
-#         return 3
-#     else:
-#         return 4
+def score_to_level_toefl(score):
+    # 0 ~ 120 → 0 ~ 5로 매핑
+    if not (0 <= score <= 120):
+        return None
+
+    if score < 30:
+        return 0
+    elif score < 50:
+        return 1
+    elif score < 70:
+        return 2
+    elif score < 90:
+        return 3
+    elif score < 105:
+        return 4
+    else:
+        return 5
 
 
+def score_to_level_ielts(score):
+    # 0 ~ 9.0 → 0 ~ 5로 매핑
+    if not (0 <= score <= 9.0):
+        return None
 
-# -----코멘트 작성 API-------
+    if score < 3.0:
+        return 0
+    elif score < 4.0:
+        return 1
+    elif score < 5.5:
+        return 2
+    elif score < 6.5:
+        return 3
+    elif score < 7.5:
+        return 4
+    else:
+        return 5
+
+
+@csrf_exempt
 @require_POST
-@login_required   # 회원만 댓글 작성 가능
 def comment_create_api(request, movie_id):
-    content = request.POST.get("content", "").strip()
+    """
+    영화 리뷰(댓글) 작성 API
+    - POST /api/movies/<movie_id>/comments/
+    - body: content (FormData)
+    - 헤더: Authorization: Bearer <access>  (없으면 401)
+    """
+    # 0) JWT 토큰 유무 확인 (간단 체크)
+    auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+    if not auth_header.startswith("Bearer "):
+        return JsonResponse({"error": "로그인이 필요합니다."}, status=401)
 
+    # 1) 내용 가져오기
+    content = request.POST.get("content", "").strip()
     if not content:
         return JsonResponse({"error": "리뷰 내용을 입력해주세요."}, status=400)
 
+    # 2) 영화 찾기
     try:
         movie = MovieData.objects.get(id=movie_id)
     except MovieData.DoesNotExist:
         return JsonResponse({"error": "영화를 찾을 수 없습니다."}, status=404)
 
+    # 3) 유저 설정 (임시: 첫 번째 유저 사용)
+    user = request.user if getattr(request, "user", None) and request.user.is_authenticated else None
+    if user is None:
+        user = User.objects.first()  # 과제/시연용, 실제 서비스면 JWT에서 추출
+
+    # 4) 댓글 생성
     comment = Comment.objects.create(
         movie=movie,
-        user=request.user,
-        content=content
+        user=user,
+        content=content,
     )
 
+    # 5) 응답 JSON
     return JsonResponse({
         "message": "리뷰가 등록되었습니다.",
         "comment": {
-            "user": request.user.username,
+            "user": comment.user.username,
             "content": comment.content,
             "created": comment.created_time.strftime("%Y-%m-%d %H:%M"),
         }
     })
 
 
+
+def frontend_home(request):
+    return render(request, "home.html")

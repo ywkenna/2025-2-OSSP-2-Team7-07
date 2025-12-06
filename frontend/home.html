@@ -1,3 +1,6 @@
+<script src="js/config.js"></script>
+
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,25 +10,39 @@
 </head>
 
 <body>
+
+<!-- =======================
+          HEADER
+======================= -->
 <header class="top-bar">
     <a href="home.html">
         <img src="http://127.0.0.1:8000/static/movies/images/icon.png" alt="로고" class="logo">
-
     </a>
+
     <nav class="nav-menu">
         <input type="text" placeholder="영화 검색" class="search-input" id="search-query">
     </nav>
+
+    <!-- 비로그인 상태에서 보이는 버튼 -->
     <a href="login.html" class="top-login-btn">로그인</a>
     <a href="signup.html" class="top-signup-btn">회원가입</a>
+
+    <!-- 로그인 상태에서 보이는 버튼 (초기엔 숨김) -->
+    <a href="mypage.html" class="top-mypage-btn" style="display:none;">마이페이지</a>
+    <button class="top-logout-btn" style="display:none;">로그아웃</button>
 </header>
 
+
+<!-- =======================
+          MAIN LIST
+======================= -->
 <div class="main-content">
     <div class="card-container"></div>
 
     <div class="filter-box">
         <h3>검색 필터</h3>
 
-        <!-- ★ 백엔드 CATEGORY_MAP 과 맞게 수정 ★ -->
+        <!-- ★ 장르 -->
         <label>장르</label>
         <select id="genre-select">
             <option value="">전체</option>
@@ -38,16 +55,17 @@
             <option value="기타">기타</option>
         </select>
 
+        <!-- ★ 개봉 연도 (아직 필터 X → UI용) -->
         <label>개봉 연도</label>
-        <select>
-            <option>전체</option>
-            <option>2020~</option>
-            <option>2010~2019</option>
-            <option>2000~2009</option>
-            <option>~2000</option>
+        <select id="year-select">
+            <option value="">전체</option>
+            <option value="2020~">2020~</option>
+            <option value="2010~2019">2010~2019</option>
+            <option value="2000~2009">2000~2009</option>
+            <option value="~2000">~2000</option>
         </select>
 
-        <!-- ★ 난이도 옵션 값도 실제 difficulty 숫자로 맞춤 ★ -->
+        <!-- ★ 난이도 -->
         <label>난이도</label>
         <select id="difficulty-select">
             <option value="">전체</option>
@@ -59,19 +77,24 @@
             <option value="5">C2</option>
         </select>
 
+        <!-- ★ 정렬 (아직 기능 X) -->
         <label>정렬</label>
-        <select>
-            <option>기본순</option>
-            <option>어려운순</option>
-            <option>쉬운순</option>
-            <option>최신순</option>
-            <option>오래된순</option>
+        <select id="sort-select">
+            <option value="">기본순</option>
+            <option value="desc">어려운순</option>
+            <option value="asc">쉬운순</option>
+            <option value="new">최신순</option>
+            <option value="old">오래된순</option>
         </select>
 
         <button class="filter-btn" type="button">검색</button>
     </div>
 </div>
 
+
+<!-- =======================
+          RECOMMEND
+======================= -->
 <div class="recommend-section">
     <h2>내 영어 점수로 영화 추천받기</h2>
     <form id="score-form">
@@ -82,18 +105,22 @@
         </select>
 
         <input type="number" name="score" placeholder="점수 입력">
-
         <button type="submit">추천 받기</button>
     </form>
 
     <div id="recommend-list"></div>
 </div>
 
-<!-- ★ 스크립트 3~4중복 제거 : 올바른 순서로 하나씩만 넣음 ★ -->
+<script src="config.js"></script>
+
 <script src="auth.js"></script>
+<script>
+  // 로그인 여부(isAuth)를 받아서 네비게이션 갱신
+  checkAuth().then((isAuth) => {
+    updateNavbar(isAuth);
+  });
+</script>
+
 <script src="home.js"></script>
 <script src="score.js"></script>
 
-
-</body>
-</html>

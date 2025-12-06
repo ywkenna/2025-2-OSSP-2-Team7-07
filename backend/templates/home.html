@@ -1,0 +1,118 @@
+<script src="js/config.js"></script>
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>홈페이지</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =======================
+          HEADER
+======================= -->
+<header class="top-bar">
+    <a href="home.html">
+        <img src="http://127.0.0.1:8000/static/movies/images/icon.png" alt="로고" class="logo">
+    </a>
+
+    <nav class="nav-menu">
+        <input type="text" placeholder="영화 검색" class="search-input" id="search-query">
+    </nav>
+
+    <a href="login.html" class="top-login-btn">로그인</a>
+    <a href="signup.html" class="top-signup-btn">회원가입</a>
+</header>
+
+
+<!-- =======================
+          MAIN LIST
+======================= -->
+<div class="main-content">
+    <div class="card-container"></div>
+
+    <div class="filter-box">
+        <h3>검색 필터</h3>
+
+        <!-- ★ 장르 -->
+        <label>장르</label>
+        <select id="genre-select">
+            <option value="">전체</option>
+            <option value="액션/스릴러">액션/스릴러</option>
+            <option value="드라마/감성">드라마/감성</option>
+            <option value="SF/판타지">SF/판타지</option>
+            <option value="코미디">코미디</option>
+            <option value="역사/전쟁">역사/전쟁</option>
+            <option value="애니메이션">애니메이션</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <!-- ★ 개봉 연도 (아직 필터 X → UI용) -->
+        <label>개봉 연도</label>
+        <select id="year-select">
+            <option value="">전체</option>
+            <option value="2020~">2020~</option>
+            <option value="2010~2019">2010~2019</option>
+            <option value="2000~2009">2000~2009</option>
+            <option value="~2000">~2000</option>
+        </select>
+
+        <!-- ★ 난이도 -->
+        <label>난이도</label>
+        <select id="difficulty-select">
+            <option value="">전체</option>
+            <option value="0">A1</option>
+            <option value="1">A2</option>
+            <option value="2">B1</option>
+            <option value="3">B2</option>
+            <option value="4">C1</option>
+            <option value="5">C2</option>
+        </select>
+
+        <!-- ★ 정렬 (아직 기능 X) -->
+        <label>정렬</label>
+        <select id="sort-select">
+            <option value="">기본순</option>
+            <option value="desc">어려운순</option>
+            <option value="asc">쉬운순</option>
+            <option value="new">최신순</option>
+            <option value="old">오래된순</option>
+        </select>
+
+        <button class="filter-btn" type="button">검색</button>
+    </div>
+</div>
+
+
+<!-- =======================
+          RECOMMEND
+======================= -->
+<div class="recommend-section">
+    <h2>내 영어 점수로 영화 추천받기</h2>
+    <form id="score-form">
+        <select name="type">
+            <option value="toeic">TOEIC</option>
+            <option value="toefl">TOEFL iBT</option>
+            <option value="ielts">IELTS</option>
+        </select>
+
+        <input type="number" name="score" placeholder="점수 입력">
+        <button type="submit">추천 받기</button>
+    </form>
+
+    <div id="recommend-list"></div>
+</div>
+
+
+<!-- =======================
+    JAVASCRIPT LOAD ORDER
+======================= -->
+<script src="auth.js"></script>
+<script src="home.js"></script>
+<script src="score.js"></script>
+
+</body>
+</html>
