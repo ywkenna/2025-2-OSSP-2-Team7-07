@@ -1,74 +1,54 @@
-const API_BASE = "http://127.0.0.1:8000";
-
-// --------------------------
-// 1) Access Token이 유효한지 검사
-// --------------------------
+// 로그인 여부 확인: 토큰으로 /api/users/userinfo/ 호출
 async function checkAuth() {
-    const access = localStorage.getItem("access");
-    if (!access) return false;
+  const access = localStorage.getItem("access");
+  if (!access) return false;
 
-    // 만료 여부 확인 불가능 → 즉시 API 호출로 검사
-    try {
-        const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
-            headers: { "Authorization": `Bearer ${access}` }
-        });
+  try {
+    const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${access}`,
+      },
+    });
 
-        if (res.ok) {
-            return true;
-        } else {
-
-        }
-    } catch {
-        return false;
+    if (!res.ok) {
+      console.warn("userinfo status:", res.status);
+      return false;
     }
+
+    const data = await res.json();
+    // 전역에 현재 유저 정보 저장 (마이페이지에서 사용)
+    window.currentUser = data;
+    return true;
+  } catch (e) {
+    console.error("checkAuth error:", e);
+    return false;
+  }
 }
 
-// --------------------------
-// 3) 로그아웃
-// --------------------------
-function logout() {
-    localStorage.removeItem("access");
-    localStorage.removeItem("username");
-    window.location.href = "login.html";
-}
+// 상단 바 버튼 상태 업데이트
+function updateNavbar(isAuth) {
+  const loginBtn   = document.querySelector(".top-login-btn");
+  const signupBtn  = document.querySelector(".top-signup-btn");
+  const mypageBtn  = document.querySelector(".top-mypage-btn");
+  const logoutBtn  = document.querySelector(".top-logout-btn"); // 있으면 사용
 
-// --------------------------
-// 4) 로그인 UI 업데이트
-// --------------------------
-// --------------------------
-// 4) 로그인 UI 업데이트 (이름 + 레벨 표시)
-// --------------------------
-async function updateNavbar() {
-    const loginBtn = document.querySelector(".top-login-btn");
-    const signupBtn = document.querySelector(".top-signup-btn");
-
-    const access = localStorage.getItem("access");
-    if (!access) return;
-
-    try {
-        const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
-            headers: { "Authorization": `Bearer ${access}` }
-        });
-        const data = await res.json();
-
-        if (data.username) {
-            const username = data.username;
-            const level = data.english_level;  // 0~5
-
-            // CEFR 문자열 매핑
-            const levelMap = ["A1", "A2", "B1", "B2", "C1", "C2"];
-            const levelStr = level !== null ? levelMap[level] : "-";
-
-            // UI 변경
-            if (loginBtn) loginBtn.style.display = "none";
-
-            if (signupBtn) {
-                signupBtn.textContent = `${username} (${levelStr}) / 로그아웃`;
-                signupBtn.addEventListener("click", logout);
-            }
-        }
-    } catch (e) {
-        console.log("Navbar update failed:", e);
+  if (isAuth) {
+    if (loginBtn)  loginBtn.style.display  = "none";
+    if (signupBtn) signupBtn.style.display = "none";
+    if (mypageBtn) mypageBtn.style.display = "inline-block";
+    if (logoutBtn) {
+      logoutBtn.style.display = "inline-block";
+      logoutBtn.onclick = () => {
+        localStorage.removeItem("access");
+        localStorage.removeItem("username");
+        location.href = "login.html";
+      };
     }
+  } else {
+    if (loginBtn)  loginBtn.style.display  = "inline-block";
+    if (signupBtn) signupBtn.style.display = "inline-block";
+    if (mypageBtn) mypageBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "none";
+  }
 }
-
