@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+	<header class="top-bar">
+		<a href="home.html">
+			<img src="images/icon.png" alt="로고" class="logo">
+		</a>
+	    <nav class="nav-menu">
+	        <input type="text" placeholder="영화 검색" class="search-input">
+	    </nav>
+	    <a href="login.html" class="top-login-btn">로그인</a>
+	    <a href="signup.html" class="top-signup-btn">회원가입</a>
+	</header>
+
+	<div class="signup-container">
+	    <h2>회원가입</h2>
+	
+	    <div class="input-group">
+	        <label for="signup-id">아이디</label>
+	        <input type="text" id="signup-id">
+	    </div>
+		
+	    <div class="input-group">
+	        <label for="signup-email">이메일</label>
+	        <input type="text" id="signup-email">
+	    </div>
+		
+	    <div class="input-group">
+	        <label for="signup-pw">비밀번호</label>
+	        <input type="password" id="signup-pw">
+	    </div>
+	
+	    <div class="input-group">
+	        <label for="signup-pw-confirm">비밀번호 확인</label>
+	        <input type="password" id="signup-pw-confirm">
+	    </div>
+	    
+	    <!-- 회원가입 구현 및 로그인 페이지로 이동 -->	
+			<button class="signup-btn" type="button">회원가입</button>
+	</div>
+<script src="signup.js"></script>
+<script src="auth.js"></script>
+<script>
+    checkAuth().then(isAuth => {
+        updateNavbar();
+    });
+</script>
+
+
+</body>
+</html>

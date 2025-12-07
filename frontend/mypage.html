@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top-bar">
+    <a href="home.html">
+        <img src="images/icon.png" alt="로고" class="logo">
+    </a>
+    <nav class="nav-menu">
+        <input type="text" placeholder="영화 검색" class="search-input">
+    </nav>
+    <a href="login.html" class="top-login-btn">로그인</a>
+    <a href="signup.html" class="top-signup-btn">회원가입</a>
+</header>
+
+<div class="mypage-container">
+	<!--기본정보-->
+	<section class="profile-box">
+	    <img src="images/icon.png" alt="프로필" class="profile-img" id="profile-img">
+	    <div class="profile-info">
+	        <h2 class="userid">지현 님</h2>
+	        <p>Email: example@email.com</p>
+	        <p>가입일: 2024-02-12</p>
+	        <input type="file" id="profile-input" accept="image/*" style="display:none;">
+	    </div>
+	</section>
+
+
+    <!--메뉴-->
+    <div class="mypage-tabs">
+        <button class="tab-btn active" data-target="scores">영어 성적</button>
+        <button class="tab-btn" data-target="wishlist">찜한 영화</button>
+        <button class="tab-btn" data-target="reviews">내 리뷰</button>
+    </div>
+
+    <!--탭-->
+    <div class="mypage-content">
+
+        <!-- 영어 성적 -->
+        <div id="scores" class="content-box show">
+            <div id="score-input-section">
+                <label>시험 종류</label>
+                <select id="test-type">
+                    <option value="">선택</option>
+                    <option value="toeic">TOEIC</option>
+                    <option value="toefl">TOEFL</option>
+                    <option value="ielts">IELTS</option>
+                </select>
+                <label>점수 입력</label>
+                <input type="number" id="test-score" placeholder="예: 850">
+                <button id="save-score-btn">성적 저장</button>
+            </div>
+            <div id="score-result-section">
+                <p><b>시험 :</b> <span id="saved-test"></span></p>
+                <p><b>점수 :</b> <span id="saved-score"></span></p>
+                <p><b>CEFR 레벨 :</b> <span id="saved-level"></span></p>
+                <button id="edit-score-btn">수정하기</button>
+            </div>
+        </div>
+
+        <!-- 찜한 영화 -->
+        <div id="wishlist" class="content-box">
+            <div class="wishlist-container">
+             <!-- JS로 동적 렌더링 -->
+            </div>
+        </div>
+
+        <!-- 내 리뷰 -->
+        <div id="reviews" class="content-box">
+            <div class="review-container">
+                <!-- JS로 동적 렌더링 -->
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+<script src="auth.js"></script>
+
+
+<script>
+
+
+  const saveBtn = document.getElementById("save-score-btn");
+  const editBtn = document.getElementById("edit-score-btn");
+  const inputSection = document.getElementById("score-input-section");
+  const resultSection = document.getElementById("score-result-section");
+
+  const CEFR_LABELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+  // -----------------------------
+  // 0. 탭 전환 (영어 성적 / 찜 / 리뷰)
+  // -----------------------------
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const contentBoxes = document.querySelectorAll(".content-box");
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.target;  // scores / wishlist / reviews
+
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      contentBoxes.forEach(box => {
+        if (box.id === target) box.classList.add("show");
+        else box.classList.remove("show");
+      });
+    });
+  });
+
+  // -----------------------------
+  // 1. 점수 → CEFR 레벨(0~5)
+  // -----------------------------
+  function convert_to_cefr(type, score) {
+    score = Number(score);
+
+    if (type === "toeic") {
+      if (score >= 945) return 5;
+      if (score >= 785) return 4;
+      if (score >= 550) return 3;
+      if (score >= 225) return 2;
+      return 1;
+    }
+
+    if (type === "toefl") {
+      if (score >= 95) return 5;
+      if (score >= 72) return 4;
+      if (score >= 42) return 3;
+      return 2;
+    }
+
+    if (type === "ielts") {
+      if (score > 8.0) return 5;
+      if (score >= 7.0) return 4;
+      if (score >= 5.5) return 3;
+      if (score >= 4.0) return 2;
+      if (score >= 2.5) return 1;
+      return 0;
+    }
+
+    return 0;
+  }
+
+  // -----------------------------
+  // 2. 성적 저장 (PATCH /api/users/userinfo/)
+  // -----------------------------
+  async function saveScoreToServer() {
+    const type = document.getElementById("test-type").value;
+    const score = document.getElementById("test-score").value.trim();
+    const access = localStorage.getItem("access");
+
+    if (!access) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    if (!type || !score) {
+      alert("시험 종류와 점수를 모두 입력해 주세요.");
+      return;
+    }
+
+    const level = convert_to_cefr(type, score);
+    console.log("계산된 CEFR 레벨:", level);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${access}`,
+        },
+        body: JSON.stringify({ english_level: level }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("성적 저장 실패:", res.status, err);
+        alert("성적 저장 실패: 다시 시도해 주세요.");
+        return;
+      }
+
+      const data = await res.json();
+      console.log("서버 응답:", data);
+
+      const savedLevel = Number(data.english_level);
+
+      document.getElementById("saved-test").textContent = type.toUpperCase();
+      document.getElementById("saved-score").textContent = score;
+      document.getElementById("saved-level").textContent =
+        CEFR_LABELS[savedLevel] ?? "";
+
+      inputSection.style.display = "none";
+      resultSection.style.display = "block";
+
+      alert("성적이 저장되었습니다.");
+    } catch (e) {
+      console.error("성적 저장 중 오류:", e);
+      alert("서버 오류가 발생했습니다.");
+    }
+  }
+
+  saveBtn.addEventListener("click", saveScoreToServer);
+
+  editBtn.addEventListener("click", () => {
+    inputSection.style.display = "block";
+    resultSection.style.display = "none";
+  });
+
+  // -----------------------------
+  // 3. userinfo 불러오기 (프로필 + 영어 레벨 + 찜 목록)
+  // -----------------------------
+  async function loadUserInfo() {
+    const access = localStorage.getItem("access");
+
+    if (!access) {
+      // 로그인 안 한 상태면 그냥 입력폼만 보여주기
+      inputSection.style.display = "block";
+      resultSection.style.display = "none";
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/users/userinfo/`, {
+        headers: {
+          "Authorization": `Bearer ${access}`,
+        },
+      });
+
+      if (!res.ok) {
+        console.warn("userinfo 불러오기 실패:", res.status);
+        inputSection.style.display = "block";
+        resultSection.style.display = "none";
+        return;
+      }
+
+      const data = await res.json();
+      console.log("초기 userinfo:", data);
+
+      // 3-1) 상단 프로필 업데이트
+      const userIdEl = document.querySelector(".userid");
+      const emailEl = document.querySelector(".profile-info p:nth-of-type(1)");
+      if (userIdEl) userIdEl.textContent = `${data.username} 님`;
+      if (emailEl) emailEl.textContent = `Email: ${data.email || "-"}`;
+
+      // 3-2) 헤더 네비게이션도 로그인 상태로 바꾸기
+      updateNavbar && updateNavbar();
+
+      // 3-3) 영어 레벨 표시
+      const level = data.english_level;
+      if (level === null || level === undefined) {
+        inputSection.style.display = "block";
+        resultSection.style.display = "none";
+      } else {
+        const idx = Number(level);
+        document.getElementById("saved-level").textContent =
+          CEFR_LABELS[idx] ?? "";
+        document.getElementById("saved-test").textContent = "";
+        document.getElementById("saved-score").textContent = "";
+
+        inputSection.style.display = "none";
+        resultSection.style.display = "block";
+      }
+
+      // 3-4) 찜한 영화 카드 렌더링
+      renderWishlist(data.like_movies || []);
+      renderMyReviews(data);
+
+    } catch (e) {
+      console.error("userinfo 불러오기 중 오류:", e);
+      inputSection.style.display = "block";
+      resultSection.style.display = "none";
+    }
+  }
+
+  // -----------------------------
+  // 4. 찜한 영화 렌더링
+  //    like_movies: [movie_id, ...]
+  // -----------------------------
+  async function renderWishlist(movieIds) {
+    const container = document.querySelector(".wishlist-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!movieIds.length) {
+      container.innerHTML = "<p>찜한 영화가 없습니다.</p>";
+      return;
+    }
+
+    for (const id of movieIds) {
+      try {
+        const res = await fetch(`${API_BASE}/api/movies/${id}/`);
+        if (!res.ok) continue;
+        const movie = await res.json();
+
+        const a = document.createElement("a");
+        a.href = `detail.html?id=${movie.id}`;
+        a.className = "wishlist-card-link";
+
+        a.innerHTML = `
+          <div class="wishlist-card">
+            <img src="${movie.image}" alt="${movie.title_ko}" class="card-img">
+            <div class="card-name">${movie.title_ko}</div>
+            <div class="card-ename">
+              ${movie.title_en} · ${movie.year} · ${movie.runtime}m
+            </div>
+            <div class="card-tag">${movie.genre}</div>
+          </div>
+        `;
+
+        container.appendChild(a);
+      } catch (e) {
+        console.error("찜한 영화 정보 불러오기 실패:", id, e);
+      }
+    }
+  }
+
+  // -----------------------------
+  // 5. 페이지 로드 시 초기화
+  // -----------------------------
+  document.addEventListener("DOMContentLoaded", () => {
+    loadUserInfo();
+  });
+
+    // -----------------------------
+  // 6. 내 리뷰 렌더링
+  //    user: userinfo 응답 객체
+  // -----------------------------
+  async function renderMyReviews(user) {
+    const container = document.querySelector(".review-container");
+    if (!container) return;
+
+    container.innerHTML = "<p>내 리뷰를 불러오는 중...</p>";
+
+    try {
+      // 1) 전체 영화 리스트 가져오기
+      const res = await fetch(`${API_BASE}/api/movies/list/`);
+      if (!res.ok) {
+        container.innerHTML = "<p>영화를 불러오는 데 실패했습니다.</p>";
+        return;
+      }
+      const movies = await res.json();
+
+      // 2) 각 영화 상세에서 comments 가져오기
+      const detailPromises = movies.map((m) =>
+        fetch(`${API_BASE}/api/movies/${m.id}/`).then((r) => r.json())
+      );
+      const details = await Promise.all(detailPromises);
+
+      const myReviews = [];
+
+      details.forEach((movieDetail) => {
+        const comments = movieDetail.comments || [];
+        comments.forEach((c) => {
+          if (isMyComment(c, user)) {
+            myReviews.push({
+              movie: movieDetail,
+              comment: c,
+            });
+          }
+        });
+      });
+
+      if (!myReviews.length) {
+        container.innerHTML = "<p>작성한 리뷰가 없습니다.</p>";
+        return;
+      }
+
+      // 3) 내 리뷰 카드들 렌더링
+      container.innerHTML = "";
+      myReviews.forEach(({ movie, comment }) => {
+        const a = document.createElement("a");
+        a.href = `detail.html?id=${movie.id}`;
+        a.className = "review-card-link";
+
+        const card = document.createElement("div");
+        card.className = "review-card";
+
+        card.innerHTML = `
+          <img src="${movie.image}" alt="${movie.title_ko}" class="review-poster">
+          <div class="review-content">
+            <div class="review-header">
+              <span class="review-title">${movie.title_ko}</span>
+            </div>
+            <span class="review-date">${comment.created}</span>
+            <p class="review-text">
+              ${comment.content}
+            </p>
+          </div>
+        `;
+
+        a.appendChild(card);
+        container.appendChild(a);
+      });
+    } catch (e) {
+      console.error("내 리뷰 불러오기 오류:", e);
+      container.innerHTML = "<p>리뷰를 불러오는 중 오류가 발생했습니다.</p>";
+    }
+  }
+
+  // -----------------------------
+  // 7. 이 코멘트가 현재 유저 것인지 판별
+  //    백엔드 구조에 최대한 안전하게 맞춰서
+  // -----------------------------
+  function isMyComment(comment, user) {
+    if (!comment || !user) return false;
+
+    const username = user.username;
+    const userId = user.id;
+
+    // 1) comment.user가 문자열(닉네임)일 경우
+    if (typeof comment.user === "string") {
+      if (username && comment.user === username) return true;
+      if (user.email && comment.user === user.email) return true;
+    }
+
+    // 2) comment.user가 숫자(id)일 경우
+    if (typeof comment.user === "number") {
+      if (userId != null && comment.user === userId) return true;
+    }
+
+    // 3) comment.user가 객체일 경우 { username: ..., id: ... }
+    if (typeof comment.user === "object" && comment.user !== null) {
+      if (username && comment.user.username === username) return true;
+      if (userId != null && comment.user.id === userId) return true;
+    }
+
+    return false;
+  }
+
+</script>
