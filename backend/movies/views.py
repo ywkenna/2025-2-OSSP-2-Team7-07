@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 
-# CATEGORY MAP (프론트 필터와 매칭)
+# CATEGORY MAP
 CATEGORY_MAP = {
     "액션/스릴러": ["액션", "스릴러", "범죄", "느와르", "네오 느와르", "네오-서부"],
     "드라마/감성": ["드라마", "심리 드라마","심리 스릴러", "성장","우정", "가족", "감성"],
@@ -22,9 +22,8 @@ CATEGORY_MAP = {
 }
 
 
-# ------------------------------------------------
+
 # 기본 영화 리스트 API
-# ------------------------------------------------
 def movies_api(request):
     movies = MovieData.objects.all()
     results = []
@@ -54,9 +53,8 @@ def movies_api(request):
     return JsonResponse(results, safe=False)
 
 
-# ------------------------------------------------
-# 검색 API (프론트 search 기능)
-# ------------------------------------------------
+
+# 검색 API 
 def movies_search_api(request):
     query = request.GET.get("query", "")
     genre = request.GET.get("genre", "")
@@ -139,9 +137,7 @@ def movies_search_api(request):
 
     return JsonResponse(results, safe=False)
 
-# ------------------------------------------------
-#  단일 영화 JSON API
-# ------------------------------------------------
+#  단일 영화 JSON API (영화 상세정보)
 def movie_detail_api(request, id):
     movie = MovieData.objects.get(id=id)
 
