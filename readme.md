@@ -14,7 +14,7 @@
        width="450">
 </p><br>
 <br>LogitBoost 모델을 사용하였으며, 설계된 모델은 76%의 정확도를 가지고 있다.
-관련 자료 및 코드 : https://drive.google.com/drive/folders/1NliC_O74LJIrVSRgkYrMkM4XWnlLb_Pq
+<br>관련 자료 및 코드 : https://drive.google.com/drive/folders/1NliC_O74LJIrVSRgkYrMkM4XWnlLb_Pq
 
 
 
